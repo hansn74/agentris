@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "jsx": "preserve",
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "incremental": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@agentris/api": ["./packages/api/src"],
+      "@agentris/db": ["./packages/db/src"],
+      "@agentris/auth": ["./packages/auth/src"],
+      "@agentris/integrations": ["./packages/integrations/src"],
+      "@agentris/ai-engine": ["./packages/ai-engine/src"],
+      "@agentris/services": ["./packages/services/src"],
+      "@agentris/shared": ["./packages/shared/src"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
