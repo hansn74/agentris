@@ -7,8 +7,22 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@agentris/db": "workspace:*",
+    "@next-auth/prisma-adapter": "^1.0.7",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "next-auth": "4.24.11"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@vitest/ui": "^3.2.4",
+    "vitest": "1.2.2"
+  }
 }

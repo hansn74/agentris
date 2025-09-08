@@ -1,0 +1,100 @@
+# Quality Gate Decision - Story 1.3: Core Authentication Service
+schema: 1
+story: '1.3'
+story_title: 'Core Authentication Service'
+gate: FAIL
+status_reason: 'Critical hardcoded secret fallback remains in callbacks/index.ts despite successful implementation of other security fixes. This blocks production deployment.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-09-08T23:45:00Z'
+
+# Always present but only active when WAIVED
+waiver: { active: false }
+
+# Critical issues requiring attention
+top_issues:
+  - id: 'SEC-001'
+    severity: high
+    finding: 'Hardcoded development secret fallback still present in callbacks/index.ts'
+    suggested_action: "Remove 'development-secret' fallback and enforce environment variables"
+    refs: ['packages/auth/src/callbacks/index.ts:5']
+    suggested_owner: dev
+
+# Extended quality metrics
+quality_score: 80 # 100 - (20*1 high) = 80 (significant improvement from 50)
+expires: '2025-09-22T23:45:00Z' # 2 weeks from review
+
+# Test coverage evidence
+evidence:
+  tests_reviewed: 29
+  risks_identified: 1
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6] # All ACs have test coverage
+    ac_gaps: [] # No AC gaps
+
+# NFR validation results
+nfr_validation:
+  security:
+    status: FAIL
+    notes: 'One critical hardcoded secret remains. Rate limiting and session management now properly implemented.'
+  performance:
+    status: PASS
+    notes: 'bcrypt rounds appropriate (12), session cleanup configured, rate limiting functional (though in-memory for MVP)'
+  reliability:
+    status: PASS
+    notes: 'Comprehensive error handling, session management with cleanup, proper token expiration'
+  maintainability:
+    status: CONCERNS
+    notes: 'Good type safety improvements and constants extracted, but 47 formatting violations need cleanup'
+
+# Actionable recommendations
+recommendations:
+  immediate: # Must fix before production
+    - action: "Remove 'development-secret' fallback from callbacks/index.ts"
+      refs: ['packages/auth/src/callbacks/index.ts:5']
+    - action: 'Implement fail-fast environment validation without fallbacks'
+      refs: ['packages/auth/src/callbacks/index.ts']
+
+  future: # Can be addressed in next iteration
+    - action: 'Fix Prettier formatting violations (47 issues)'
+      refs:
+        ['packages/api/src/middleware/rateLimit.ts', 'packages/api/src/services/sessionManager.ts']
+    - action: 'Implement Redis for rate limiting store in production'
+      refs: ['packages/api/src/middleware/rateLimit.ts:4']
+    - action: 'Add CORS configuration for production deployment'
+      refs: ['packages/api/src/index.ts']
+    - action: 'Add integration tests with real database'
+      refs: ['packages/api/src/__tests__/']
+
+# Risk summary
+risk_summary:
+  totals:
+    critical: 1 # One critical security vulnerability remains
+    high: 0
+    medium: 0
+    low: 3 # Formatting and production optimization issues
+  recommendations:
+    must_fix:
+      - 'Remove hardcoded secret fallback before any deployment'
+      - 'Ensure all environment variables fail fast without fallbacks'
+    monitor:
+      - 'Track authentication failure rates for anomaly detection'
+      - 'Monitor rate limiting effectiveness'
+      - 'Watch session invalidation patterns'
+
+# History of gate decisions
+history:
+  - at: '2025-09-08T14:30:00Z'
+    gate: CONCERNS
+    note: 'Initial review - 3 high-risk security vulnerabilities and missing architectural features'
+  - at: '2025-09-08T23:45:00Z'
+    gate: FAIL
+    note: 'Post-QA fixes review - 5 of 6 issues resolved but critical hardcoded secret remains'
+
+# Summary of improvements since last review
+improvements_applied:
+  - 'SEC-002: Type safety fixed - removed any usage in JWT callbacks'
+  - 'SEC-003: Sensitive tokens removed from console logs'
+  - 'SEC-004: Global rate limiting implemented for all auth endpoints'
+  - 'ARCH-001: Server-side session invalidation with SessionManager added'
+  - 'NFR: Magic numbers extracted to constants (auth.ts)'
+  - 'All 29 API tests passing with comprehensive coverage'

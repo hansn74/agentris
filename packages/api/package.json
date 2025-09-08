@@ -13,6 +13,19 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@agentris/auth": "workspace:*",
+    "@agentris/db": "workspace:*",
+    "@agentris/shared": "workspace:*",
+    "@prisma/client": "5.8.1",
+    "@trpc/client": "10.45.2",
+    "@trpc/server": "10.45.2",
+    "bcryptjs": "^3.0.2",
+    "nanoid": "^5.1.5",
+    "next-auth": "4.24.11",
+    "pino": "^9.9.4",
+    "pino-pretty": "^13.1.1",
+    "superjson": "^2.2.2",
+    "zod": "3.22.5"
+  }
 }
