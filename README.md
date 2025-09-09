@@ -6,6 +6,33 @@
 
 AI-powered Salesforce development platform that streamlines ticket processing, validation, and deployment workflows.
 
+## 🚀 Quick Start
+
+Get Agentris up and running in under 5 minutes:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd agentris
+
+# Install dependencies
+pnpm install
+
+# Set up environment
+cp .env.example .env
+
+# Start infrastructure (Docker required)
+pnpm docker:up
+
+# Initialize database
+pnpm db:push
+
+# Start development server
+pnpm dev
+```
+
+Visit **http://localhost:3000** to access the application.
+
 ## Architecture Overview
 
 Agentris is built as a modular monorepo using modern web technologies:
@@ -19,10 +46,22 @@ Agentris is built as a modular monorepo using modern web technologies:
 
 ## Prerequisites
 
-- Node.js v20.0.0 or higher
-- pnpm v10.15.0 or higher
-- Docker v24.0.0 or higher
-- Git
+### Required Software
+
+- **Node.js** v20.0.0 or higher ([Download](https://nodejs.org/))
+- **pnpm** v10.15.0 or higher ([Installation](https://pnpm.io/installation))
+- **Docker Desktop** v24.0.0 or higher ([Download](https://www.docker.com/products/docker-desktop))
+- **Git** ([Download](https://git-scm.com/))
+
+### System Requirements
+
+- **Operating System**: macOS, Linux, or Windows (with WSL2)
+- **Memory**: Minimum 8GB RAM (16GB recommended)
+- **Storage**: At least 2GB free space
+- **Ports**: Ensure the following ports are available:
+  - 3000 (Next.js application)
+  - 5432 (PostgreSQL database)
+  - 6379 (Redis cache)
 
 ## Project Structure
 
@@ -45,67 +84,147 @@ agentris/
 └── scripts/                     # Development scripts
 ```
 
-## Setup Instructions
+## 📦 Installation Guide
 
-### 1. Clone the Repository
+### Step 1: Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd agentris
 ```
 
-### 2. Install Dependencies
+### Step 2: Install Dependencies
 
 ```bash
+# Install pnpm if not already installed
+npm install -g pnpm
+
+# Install project dependencies
 pnpm install
 ```
 
-### 3. Environment Configuration
+### Step 3: Environment Configuration
 
-Copy the example environment file and configure your settings:
+Create your environment file from the template:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` with your configuration:
+#### Required Environment Variables
 
-- Database credentials (default provided for local development)
-- Redis connection (default provided for local development)
-- API keys for integrations (add when needed)
+Edit `.env` and configure the following:
 
-### 4. Start Infrastructure Services
+```env
+# Database (default values for local development)
+DATABASE_URL=postgresql://postgres:password@localhost:5432/agentris
 
-Start PostgreSQL and Redis using Docker Compose:
+# Redis (default values for local development)
+REDIS_URL=redis://localhost:6379
+
+# Authentication (required)
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=<generate-random-32-char-string>
+
+# Optional: External Integrations
+JIRA_CLIENT_ID=<your-jira-client-id>
+JIRA_CLIENT_SECRET=<your-jira-client-secret>
+JIRA_REDIRECT_URI=http://localhost:3000/api/auth/jira/callback
+
+# Future integrations (optional)
+ANTHROPIC_API_KEY=<your-anthropic-api-key>
+SF_CLIENT_ID=<your-salesforce-client-id>
+SF_CLIENT_SECRET=<your-salesforce-client-secret>
+```
+
+💡 **Tip**: Generate a secure `NEXTAUTH_SECRET` using:
 
 ```bash
+openssl rand -base64 32
+```
+
+### Step 4: Start Infrastructure Services
+
+Ensure Docker Desktop is running, then start the required services:
+
+```bash
+# Start PostgreSQL and Redis containers
 pnpm docker:up
-```
 
-Verify services are running:
-
-```bash
+# Verify services are running
 pnpm docker:logs
+
+# To stop services later
+pnpm docker:down
 ```
 
-### 5. Initialize Database
+### Step 5: Initialize Database
 
-Run database migrations (will be configured in future stories):
+Set up the database schema:
 
 ```bash
+# Push Prisma schema to database
 pnpm db:push
+
+# Generate Prisma client
+pnpm db:generate
 ```
 
-### 6. Start Development Server
+### Step 6: Start Development Server
 
 ```bash
+# Start all services in development mode
 pnpm dev
+
+# Or start specific services:
+pnpm dev:web    # Frontend only
+pnpm dev:api    # Backend only
 ```
 
-The application will be available at:
+## 🌐 Accessing the Application
 
-- Web UI: http://localhost:3000
-- API: Integrated with Next.js
+Once running, access Agentris at:
+
+- **Web Application**: http://localhost:3000
+- **API Endpoints**: http://localhost:3000/api/trpc
+
+### Default Ports
+
+- **3000**: Next.js application
+- **5432**: PostgreSQL database
+- **6379**: Redis cache
+
+## 🧪 Testing the Application
+
+### Run Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run tests with coverage
+pnpm test:coverage
+```
+
+### Type Checking
+
+```bash
+# Check TypeScript types
+pnpm typecheck
+```
+
+### Linting
+
+```bash
+# Run ESLint
+pnpm lint
+
+# Auto-fix linting issues
+pnpm lint:fix
+```
 
 ## Development Commands
 
@@ -163,56 +282,269 @@ The application will be available at:
    - Run production checks: `pnpm typecheck && pnpm test`
    - Deploy using preferred platform
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
-### Common Issues
+### Common Issues and Solutions
 
-**Port conflicts**
+#### Docker Desktop Not Running
 
-- PostgreSQL (5432) or Redis (6379) ports in use
-- Solution: Stop conflicting services or modify ports in docker-compose.yml
+**Problem**: `Cannot connect to the Docker daemon`
 
-**pnpm installation fails**
+**Solution**:
 
-- Ensure Node.js v20+ is installed
-- Clear cache: `pnpm store prune`
+1. Start Docker Desktop application
+2. Wait for Docker to fully initialize (icon shows "Docker Desktop is running")
+3. Retry `pnpm docker:up`
 
-**TypeScript errors**
+#### Port Already in Use
 
-- Run `pnpm typecheck` to identify issues
-- Ensure all packages are properly installed
+**Problem**: `bind: address already in use`
 
-**Docker services not starting**
+**Solutions**:
 
-- Check Docker daemon is running
-- Verify port availability
-- Check logs: `pnpm docker:logs`
+```bash
+# Find and kill process using port 3000
+lsof -ti:3000 | xargs kill -9
 
-**Database connection issues**
+# Find and kill process using port 5432 (PostgreSQL)
+lsof -ti:5432 | xargs kill -9
 
-- Ensure Docker services are running
-- Verify DATABASE_URL in .env matches Docker configuration
-- Check PostgreSQL container health: `docker ps`
+# Or modify ports in docker-compose.yml and .env
+```
 
-## Contributing
+#### pnpm Installation Fails
 
-1. Follow conventional commit format for commit messages
-2. Ensure all tests pass before submitting PR
-3. Update documentation for significant changes
-4. Follow TypeScript strict mode guidelines
+**Problem**: `pnpm: command not found` or installation errors
 
-## Technology Stack
+**Solutions**:
 
-- **Frontend**: Next.js 14.1.x, React, TypeScript
-- **UI Components**: shadcn/ui with Tailwind CSS
-- **Backend**: tRPC 10.45.x, TypeScript
-- **Database**: PostgreSQL 16.x with Prisma 5.8.x
+```bash
+# Install pnpm globally
+npm install -g pnpm
+
+# Or use corepack (built into Node.js 16+)
+corepack enable
+corepack prepare pnpm@latest --activate
+
+# Clear pnpm cache if needed
+pnpm store prune
+```
+
+#### Database Connection Failed
+
+**Problem**: `Can't reach database server` or connection timeout
+
+**Solutions**:
+
+1. Ensure Docker containers are running:
+   ```bash
+   docker ps  # Should show postgres and redis containers
+   ```
+2. Check container logs:
+   ```bash
+   pnpm docker:logs
+   ```
+3. Verify DATABASE_URL in `.env`:
+   ```env
+   DATABASE_URL=postgresql://postgres:password@localhost:5432/agentris
+   ```
+4. Restart containers:
+   ```bash
+   pnpm docker:down
+   pnpm docker:up
+   ```
+
+#### TypeScript Build Errors
+
+**Problem**: Build fails with TypeScript errors
+
+**Current Known Issues**:
+
+- Jira integration has type errors (non-blocking for development)
+
+**Solutions**:
+
+```bash
+# Run in development mode (bypasses TypeScript errors)
+pnpm dev
+
+# To see all TypeScript errors
+pnpm typecheck
+
+# To fix specific package
+cd packages/integrations
+pnpm typecheck
+```
+
+#### Node Version Mismatch
+
+**Problem**: `The engine "node" is incompatible`
+
+**Solution**:
+
+```bash
+# Check your Node version
+node --version  # Should be v20.0.0 or higher
+
+# Install correct version using nvm
+nvm install 20
+nvm use 20
+
+# Or using fnm
+fnm install 20
+fnm use 20
+```
+
+#### Missing Environment Variables
+
+**Problem**: Application errors about missing configuration
+
+**Solution**:
+
+1. Ensure `.env` file exists:
+   ```bash
+   cp .env.example .env
+   ```
+2. Add required NEXTAUTH_SECRET:
+   ```bash
+   echo "NEXTAUTH_SECRET=$(openssl rand -base64 32)" >> .env
+   ```
+
+#### Permission Denied Errors
+
+**Problem**: Permission denied when running commands
+
+**Solutions**:
+
+```bash
+# Fix node_modules permissions
+sudo chown -R $(whoami) node_modules
+
+# Clear and reinstall
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+### Getting Help
+
+If you encounter issues not covered here:
+
+1. Check existing [GitHub Issues](https://github.com/YOUR_ORG/agentris/issues)
+2. Review the [documentation](./docs/)
+3. Create a new issue with:
+   - Error message
+   - Steps to reproduce
+   - System information (`node --version`, `pnpm --version`, OS)
+
+## 🏗️ Development Workflow
+
+### Making Changes
+
+1. **Create a feature branch**:
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes** following the coding standards
+
+3. **Test your changes**:
+
+   ```bash
+   pnpm test
+   pnpm typecheck
+   pnpm lint
+   ```
+
+4. **Commit using conventional commits**:
+   ```bash
+   git commit -m "feat: add new feature"
+   # or
+   git commit -m "fix: resolve issue with..."
+   ```
+
+### Building for Production
+
+```bash
+# Build all packages
+pnpm build
+
+# Run production checks
+pnpm typecheck && pnpm test
+
+# Start production server
+pnpm start
+```
+
+## 🛠️ Technology Stack
+
+### Frontend
+
+- **Framework**: Next.js 14.1.x with App Router
+- **Language**: TypeScript 5.3.x
+- **UI Library**: React 18.x
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: React Context + tRPC
+
+### Backend
+
+- **API Layer**: tRPC 10.45.x for type-safe APIs
+- **Database ORM**: Prisma 5.8.x
+- **Database**: PostgreSQL 16.x
 - **Cache**: Redis 7.2.x
-- **Authentication**: NextAuth.js 4.24.x
+- **Authentication**: NextAuth.js 4.24.x with JWT
+
+### Infrastructure
+
+- **Build System**: Turborepo 2.5.x
+- **Package Manager**: pnpm 10.15.x
+- **Container**: Docker & Docker Compose
 - **Testing**: Vitest 1.2.x
-- **Build Tools**: Turborepo 2.5.x, pnpm 10.15.x
 - **Code Quality**: ESLint, Prettier, Husky
 
-## License
+### Integrations
+
+- **Jira**: OAuth 2.0 integration for ticket management
+- **Salesforce**: (Coming soon) API integration
+- **AI Engine**: (Coming soon) LLM orchestration
+
+## 📚 Documentation
+
+- [Architecture Overview](./docs/architecture/)
+- [API Documentation](./docs/api/)
+- [Development Guide](./docs/development/)
+- [Testing Strategy](./docs/testing/)
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. **Code Style**: Follow the existing patterns and conventions
+2. **Commits**: Use [Conventional Commits](https://www.conventionalcommits.org/)
+3. **Testing**: Write tests for new features
+4. **Documentation**: Update docs for significant changes
+5. **Pull Requests**: Provide clear descriptions of changes
+
+### Commit Message Format
+
+```
+type(scope): description
+
+[optional body]
+
+[optional footer]
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+## 📄 License
 
 [License information to be added]
+
+## 🙏 Acknowledgments
+
+Built with modern open-source technologies. Special thanks to all contributors and the open-source community.
+
+---
+
+**Need help?** Create an [issue](https://github.com/YOUR_ORG/agentris/issues) or check the [documentation](./docs/).
