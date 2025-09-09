@@ -8,9 +8,9 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "db:push": "dotenv -e ../../.env -- prisma db push",
-    "db:generate": "dotenv -e ../../.env -- prisma generate",
-    "db:studio": "dotenv -e ../../.env -- prisma studio"
+    "db:push": "npx dotenv-cli -e ../../.env -- prisma db push",
+    "db:generate": "npx dotenv-cli -e ../../.env -- prisma generate",
+    "db:studio": "npx dotenv-cli -e ../../.env -- prisma studio"
   },
   "dependencies": {
     "@prisma/client": "5.8.1",
