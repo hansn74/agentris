@@ -70,7 +70,24 @@ let cachedEnv: EnvConfig | null = null;
 
 export function getEnvConfig(): EnvConfig {
   if (!cachedEnv) {
-    cachedEnv = validateEnv();
+    // In test environment, provide default values for optional fields
+    if (process.env.NODE_ENV === 'test') {
+      cachedEnv = {
+        DATABASE_URL: process.env.DATABASE_URL || 'postgresql://test:test@localhost:5432/test',
+        NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'test-secret-for-testing-only',
+        JIRA_CLIENT_ID: process.env.JIRA_CLIENT_ID || 'test-jira-client-id',
+        JIRA_CLIENT_SECRET: process.env.JIRA_CLIENT_SECRET || 'test-jira-client-secret',
+        JIRA_REDIRECT_URI: process.env.JIRA_REDIRECT_URI,
+        JIRA_WEBHOOK_SECRET: process.env.JIRA_WEBHOOK_SECRET,
+        JIRA_FIELD_ACCEPTANCE_CRITERIA: process.env.JIRA_FIELD_ACCEPTANCE_CRITERIA,
+        ENCRYPTION_KEY:
+          process.env.ENCRYPTION_KEY || 'test-encryption-key-32-chars-long-for-testing',
+        NODE_ENV: 'test' as const,
+      };
+    } else {
+      cachedEnv = validateEnv();
+    }
   }
   return cachedEnv;
 }

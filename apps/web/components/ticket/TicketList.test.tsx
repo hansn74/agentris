@@ -107,14 +107,24 @@ describe('TicketList', () => {
   });
 
   it('handles pagination', async () => {
+    // Mock data with hasMore: true to enable next button
+    mockUseQuery.mockReturnValue({
+      ...defaultMockData,
+      data: {
+        ...defaultMockData.data,
+        hasMore: true, // Enable next button
+      },
+    });
+
     render(<TicketList />);
     const user = userEvent.setup();
 
     const nextButton = screen.getByRole('button', { name: /next/i });
     const prevButton = screen.getByRole('button', { name: /previous/i });
 
-    // Initially, previous should be disabled
+    // Initially, previous should be disabled and next should be enabled
     expect(prevButton).toBeDisabled();
+    expect(nextButton).not.toBeDisabled();
 
     // Click next
     await user.click(nextButton);
