@@ -1,12 +1,15 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
-import { api } from './trpc/server';
+import { PrismaClient } from '@agentris/db';
+import bcrypt from 'bcryptjs';
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
+
+const prisma = new PrismaClient();
 
 // Auth.js v5 expects AUTH_SECRET, but support both for compatibility
 const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
@@ -34,28 +37,34 @@ export const { handlers, signIn, signOut, auth }: any = NextAuth({
         }
 
         try {
-          // Use the tRPC auth.login procedure for actual authentication
-          // @ts-expect-error - tRPC type issue
-          const result = await api.auth.login({
-            email: parsed.data.email,
-            password: parsed.data.password,
+          // Find user by email
+          const user = await prisma.user.findUnique({
+            where: { email: parsed.data.email },
           });
 
-          if (result.success && result.user) {
-            return {
-              id: result.user.id,
-              email: result.user.email,
-              name: result.user.name,
-              role: result.user.role,
-            };
+          if (!user || !user.password) {
+            return null;
           }
+
+          // Verify password
+          const isPasswordValid = await bcrypt.compare(parsed.data.password, user.password);
+
+          if (!isPasswordValid) {
+            return null;
+          }
+
+          // Return user data for session
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          };
         } catch (error) {
           // Authentication failed
           console.error('Authentication error:', error);
           return null;
         }
-
-        return null;
       },
     }),
   ],
