@@ -1,0 +1,67 @@
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { z } from 'zod';
+import { api } from './trpc/server';
+
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [
+    Credentials({
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
+      },
+      authorize: async (credentials) => {
+        const parsed = loginSchema.safeParse(credentials);
+
+        if (!parsed.success) {
+          return null;
+        }
+
+        try {
+          // Use the tRPC auth.login procedure for actual authentication
+          const result = await api.auth.login({
+            email: parsed.data.email,
+            password: parsed.data.password,
+          });
+
+          if (result.success && result.user) {
+            return {
+              id: result.user.id,
+              email: result.user.email,
+              name: result.user.name,
+              role: result.user.role,
+            };
+          }
+        } catch (error) {
+          // Authentication failed
+          console.error('Authentication error:', error);
+          return null;
+        }
+
+        return null;
+      },
+    }),
+  ],
+  pages: {
+    signIn: '/login',
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
+});

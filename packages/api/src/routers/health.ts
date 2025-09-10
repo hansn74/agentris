@@ -16,7 +16,7 @@ export const healthRouter = router({
         responseTime: Date.now() - dbStart,
       };
     } catch (error) {
-      logger.error('Database health check failed', error);
+      logger.error({ error }, 'Database health check failed');
       checks.database = {
         status: 'unhealthy',
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -32,7 +32,7 @@ export const healthRouter = router({
           message: 'Redis health check not yet implemented',
         };
       } catch (error) {
-        logger.error('Redis health check failed', error);
+        logger.error({ error }, 'Redis health check failed');
         checks.redis = {
           status: 'unhealthy',
           error: error instanceof Error ? error.message : 'Unknown error',
@@ -74,7 +74,7 @@ export const healthRouter = router({
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Readiness check failed', error);
+      logger.error({ error }, 'Readiness check failed');
       return {
         ready: false,
         timestamp: new Date().toISOString(),

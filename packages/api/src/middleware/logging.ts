@@ -7,7 +7,7 @@ import {
   logError,
 } from '../utils/logger';
 
-export const loggingMiddleware = middleware(async ({ path, type, next, ctx, input }) => {
+export const loggingMiddleware = middleware(async ({ path, type, next, ctx, input }: any) => {
   const correlationId = generateCorrelationId();
   const requestLogger = createRequestLogger(correlationId, {
     path,

@@ -1,1 +1,2 @@
-// Placeholder for integrations package
+// Export Jira integration
+export * as jira from './jira';

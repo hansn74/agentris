@@ -27,7 +27,7 @@ describe('Authentication Middleware', () => {
     it('should allow access with valid session', async () => {
       const ctx = createInnerTRPCContext({
         session: {
-          user: { id: 'user-1', email: 'test@example.com' },
+          user: { id: 'user-1', email: 'test@example.com', role: 'CONSULTANT' },
           expires: new Date(Date.now() + 86400000).toISOString(),
         },
       });
@@ -173,7 +173,7 @@ describe('Authentication Middleware', () => {
     it('should handle expired session gracefully', async () => {
       const ctx = createInnerTRPCContext({
         session: {
-          user: { id: 'user-1', email: 'test@example.com' },
+          user: { id: 'user-1', email: 'test@example.com', role: 'ADMIN' },
           expires: new Date(Date.now() - 86400000).toISOString(), // Expired
         },
       });

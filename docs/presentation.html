@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentris - Project Update</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 60px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 80vh;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #764ba2;
+            margin-bottom: 15px;
+            margin-top: 40px;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            margin-top: 30px;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.4em;
+            color: #555;
+            margin-bottom: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        p, li {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            z-index: 1001;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .key-metric {
+            display: inline-block;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            margin: 10px 10px 10px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .phase-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+
+        .completed {
+            background: #10b981;
+            color: white;
+        }
+
+        .in-progress {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .upcoming {
+            background: #6b7280;
+            color: white;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            padding: 25px;
+            background: #f9fafb;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .emoji-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #667eea;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.2em;
+            margin: 20px 10px 20px 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                min-height: auto;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.8em;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .keyboard-hint {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+            color: #666;
+            z-index: 1000;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressBar"></div>
+    </div>
+
+    <div class="keyboard-hint">
+        Use ← → arrows or buttons to navigate
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="logo">Agentris</div>
+            <h1>Project Update</h1>
+            <h2 style="color: #666;">AI-Powered Salesforce Consultant Assistant</h2>
+            <p style="font-size: 1.4em; margin-top: 40px;">Transforming Salesforce consulting for the AI era</p>
+            
+            <div style="margin-top: 60px;">
+                <div class="key-metric">60% Automation</div>
+                <div class="key-metric">40% Faster Delivery</div>
+                <div class="key-metric">95% First-Time-Right</div>
+                <div class="key-metric">50% Less Clarification</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Executive Summary -->
+        <div class="slide">
+            <h1>Executive Summary</h1>
+            
+            <h3>What is Agentris?</h3>
+            <p>An AI-powered platform that revolutionizes how Salesforce implementation partners deliver their services by intelligently automating routine configuration tasks with transparent, controlled automation.</p>
+            
+            <h3>Key Value Proposition</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="emoji-icon">🚀</div>
+                    <h4>60% Automation</h4>
+                    <p>Routine Salesforce configuration tasks automated</p>
+                </div>
+                <div class="feature-card">
+                    <div class="emoji-icon">⏱️</div>
+                    <h4>40% Faster</h4>
+                    <p>Ticket completion times dramatically reduced</p>
+                </div>
+                <div class="feature-card">
+                    <div class="emoji-icon">✅</div>
+                    <h4>95% Accuracy</h4>
+                    <p>First-time-right implementation rate</p>
+                </div>
+                <div class="feature-card">
+                    <div class="emoji-icon">💬</div>
+                    <h4>50% Reduction</h4>
+                    <p>Time spent clarifying requirements cut in half</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Problem -->
+        <div class="slide">
+            <h1>The Problem We're Solving</h1>
+            
+            <h2>The Competitive Crisis</h2>
+            <ul>
+                <li><strong>AI-powered competitors</strong> emerging with faster, cheaper delivery</li>
+                <li><strong>Manual processes</strong> creating unsustainable cost structures</li>
+                <li><strong>Quality issues</strong> damaging client relationships and trust</li>
+            </ul>
+
+            <h2>Critical Pain Points</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🎯 Ambiguous Requirements</h4>
+                    <p><strong>50%+ of tickets</strong> have unclear acceptance criteria</p>
+                    <p>Hours wasted in clarification cycles</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔄 Repetitive Work</h4>
+                    <p><strong>30-40% of time</strong> on routine configurations</p>
+                    <p>Valuable expertise wasted on simple tasks</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🐛 Quality Gaps</h4>
+                    <p><strong>25-40% of time</strong> on manual testing</p>
+                    <p>Bugs still discovered post-delivery</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Our Solution -->
+        <div class="slide">
+            <h1>Our Solution: Agentris</h1>
+            
+            <h2>How It Works</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Reads</h4>
+                    <p>Jira tickets and understands requirements</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Detects</h4>
+                    <p>Ambiguities and asks clarifying questions</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Previews</h4>
+                    <p>Changes before implementation</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Executes</h4>
+                    <p>Approved configurations automatically</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Documents</h4>
+                    <p>All work with complete audit trails</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Core Capabilities -->
+        <div class="slide">
+            <h1>Core Capabilities</h1>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="emoji-icon">🎯</div>
+                    <h4>Intelligent Ambiguity Resolution</h4>
+                    <ul>
+                        <li>Detects unclear requirements</li>
+                        <li>Generates ranked questions</li>
+                        <li>Updates tickets automatically</li>
+                        <li>50% faster clarification</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="emoji-icon">👁️</div>
+                    <h4>Transparent Change Preview</h4>
+                    <ul>
+                        <li>Before/After visualizations</li>
+                        <li>Impact analysis</li>
+                        <li>Rollback plans</li>
+                        <li>Approval required</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="emoji-icon">🤖</div>
+                    <h4>Smart Automation</h4>
+                    <ul>
+                        <li>Simple configurations</li>
+                        <li>Flow Builder automation</li>
+                        <li>Apex code with tests</li>
+                        <li>Automatic Git commits</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="emoji-icon">📊</div>
+                    <h4>Client-Ready Documentation</h4>
+                    <ul>
+                        <li>Comprehensive audit trails</li>
+                        <li>Professional reports</li>
+                        <li>Test results</li>
+                        <li>Complete transparency</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Innovation Insights -->
+        <div class="slide">
+            <h1>Innovation from Brainstorming</h1>
+            
+            <h2>Key Discoveries</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>The 60/40 Rule</h4>
+                    <p>60% of tickets can be fully automated, 40% need human-AI collaboration</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Trust Through Transparency</h4>
+                    <p>Consultants need to see and approve every change</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Authentication Solution</h4>
+                    <p>Salesforce CLI provides secure access without credential storage</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Virtuous Learning Cycle</h4>
+                    <p>System improves from consultant guidance over time</p>
+                </div>
+            </div>
+
+            <h2>Prioritized Opportunities</h2>
+            <ol style="font-size: 1.3em; margin-top: 30px;">
+                <li><strong>Ambiguity Detection</strong> - Addresses biggest pain point immediately</li>
+                <li><strong>Salesforce CLI Integration</strong> - Solves security elegantly</li>
+                <li><strong>Change Preview System</strong> - Builds essential trust</li>
+            </ol>
+        </div>
+
+        <!-- Slide 7: Development Progress -->
+        <div class="slide">
+            <h1>Current Progress</h1>
+            
+            <h2><span class="phase-badge completed">Completed</span> Phase 1: Foundation</h2>
+            <ul>
+                <li>Monorepo setup with Turborepo</li>
+                <li>Core authentication service with NextAuth</li>
+                <li>API layer with type-safe tRPC</li>
+                <li>Database schema designed</li>
+                <li>Basic Jira OAuth flow</li>
+            </ul>
+
+            <h2><span class="phase-badge in-progress">In Progress</span> Phase 2: Core Automation</h2>
+            <ul>
+                <li>Jira webhook listeners for real-time updates</li>
+                <li>Salesforce CLI authentication flow</li>
+                <li>Change preview UI components</li>
+                <li>Test framework setup</li>
+            </ul>
+
+            <h2><span class="phase-badge upcoming">Upcoming</span> Phase 3: Intelligence Layer</h2>
+            <ul>
+                <li>LLM integration for requirement analysis</li>
+                <li>Ambiguity detection engine</li>
+                <li>Clarification question generator</li>
+                <li>Context-aware recommendations</li>
+            </ul>
+        </div>
+
+        <!-- Slide 8: Technical Architecture -->
+        <div class="slide">
+            <h1>Technical Architecture</h1>
+            
+            <h2>Modern Tech Stack</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Frontend</h4>
+                    <p>Next.js 14 with React Server Components</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Backend</h4>
+                    <p>TypeScript with tRPC for type-safe APIs</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Database</h4>
+                    <p>PostgreSQL with Prisma ORM</p>
+                </div>
+                <div class="feature-card">
+                    <h4>AI Engine</h4>
+                    <p>Anthropic Claude for intelligent analysis</p>
+                </div>
+            </div>
+
+            <h2>Architecture Principles</h2>
+            <ul>
+                <li><strong>Monorepo</strong> for code sharing and consistency</li>
+                <li><strong>Type-safe</strong> from database to UI</li>
+                <li><strong>Microservices-ready</strong> but starting simple</li>
+                <li><strong>Security-first</strong> with OAuth 2.0 everywhere</li>
+                <li><strong>Audit everything</strong> for compliance and trust</li>
+            </ul>
+        </div>
+
+        <!-- Slide 9: Way of Working -->
+        <div class="slide">
+            <h1>Way of Working</h1>
+            
+            <h2>Agile with Purpose</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>2-Week Sprints</h4>
+                    <p>Focused on delivering working features</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Daily Standups</h4>
+                    <p>Team synchronization and blocker removal</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Sprint Demos</h4>
+                    <p>Show progress to early adopter partners</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Continuous Feedback</h4>
+                    <p>Incorporate immediately into development</p>
+                </div>
+            </div>
+
+            <h2>Quality Standards</h2>
+            <ul>
+                <li>Test-Driven Development for critical paths</li>
+                <li>Code reviews on every pull request</li>
+                <li>Automated testing before deployment</li>
+                <li>Documentation updated with code</li>
+            </ul>
+        </div>
+
+        <!-- Slide 10: Market Opportunity -->
+        <div class="slide">
+            <h1>Market Opportunity</h1>
+            
+            <h2>Target Users</h2>
+            
+            <h3>Primary: Early Adopter Consultants (20% of market)</h3>
+            <ul>
+                <li>2-10 years Salesforce experience</li>
+                <li>Technology enthusiasts</li>
+                <li>Managing 3-8 concurrent projects</li>
+                <li>Seeking competitive advantage</li>
+            </ul>
+
+            <h3>Secondary: Delivery Managers & Architects</h3>
+            <ul>
+                <li>Need visibility and control</li>
+                <li>Require ROI demonstration</li>
+                <li>Set technical standards</li>
+                <li>Influence tool adoption</li>
+            </ul>
+
+            <h2>Go-to-Market Strategy</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Pilot Program</h4>
+                    <p>3-5 implementation partners</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Success Stories</h4>
+                    <p>From early adopters</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Word-of-mouth</h4>
+                    <p>In Salesforce community</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Demonstrate ROI</h4>
+                    <p>Within 6 months</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Investment Highlights -->
+        <div class="slide">
+            <h1>Investment Highlights</h1>
+            
+            <h2>Financial Impact</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>$500K+</h4>
+                    <p>Efficiency savings in Year 1</p>
+                </div>
+                <div class="feature-card">
+                    <h4>30%</h4>
+                    <p>Capacity increase without hiring</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Premium Pricing</h4>
+                    <p>Enabled by faster delivery</p>
+                </div>
+                <div class="feature-card">
+                    <h4>$5B+</h4>
+                    <p>Total addressable market</p>
+                </div>
+            </div>
+
+            <h2>Strategic Value</h2>
+            <ul>
+                <li><strong>Competitive differentiation</strong> in crowded market</li>
+                <li><strong>Client satisfaction</strong> through quality and speed</li>
+                <li><strong>Scalable growth</strong> without proportional costs</li>
+                <li><strong>Network effects</strong> as system learns and improves</li>
+            </ul>
+        </div>
+
+        <!-- Slide 12: Call to Action -->
+        <div class="slide">
+            <h1>Get Involved</h1>
+            
+            <h2>For Implementation Partners</h2>
+            <p>Join our pilot program for early access and shape the product with your feedback</p>
+            <a href="#" class="cta-button">Join Pilot Program</a>
+
+            <h2>For Investors</h2>
+            <p>Ground floor opportunity in $5B+ market with clear path to profitability</p>
+            <a href="#" class="cta-button">Schedule Meeting</a>
+
+            <h2>For Salesforce Consultants</h2>
+            <p>Amplify your expertise with AI assistance and deliver more value faster</p>
+            <a href="#" class="cta-button">Request Demo</a>
+
+            <div style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #e5e7eb;">
+                <h3>Contact Information</h3>
+                <p>Email: info@agentris.ai</p>
+                <p>Website: www.agentris.ai (coming soon)</p>
+                <p>LinkedIn: /company/agentris</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <div class="slide-counter">
+            <span id="currentSlide">1</span> / <span id="totalSlides">12</span>
+        </div>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = currentSlide + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+            
+            // Update progress bar
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Animate elements on slide change
+            const slideElements = slides[currentSlide].querySelectorAll('h1, h2, h3, p, li, .feature-card, .timeline-item');
+            slideElements.forEach((el, index) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentSlide > 0) {
+                changeSlide(-1);
+            } else if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) {
+                changeSlide(1);
+            } else if (e.key === 'Home') {
+                showSlide(0);
+            } else if (e.key === 'End') {
+                showSlide(totalSlides - 1);
+            }
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50 && currentSlide < totalSlides - 1) {
+                changeSlide(1);
+            }
+            if (touchEndX > touchStartX + 50 && currentSlide > 0) {
+                changeSlide(-1);
+            }
+        }
+
+        // Initialize
+        showSlide(0);
+
+        // Auto-hide keyboard hint
+        setTimeout(() => {
+            document.querySelector('.keyboard-hint').style.opacity = '0';
+            setTimeout(() => {
+                document.querySelector('.keyboard-hint').style.display = 'none';
+            }, 500);
+        }, 5000);
+    </script>
+</body>
+</html>

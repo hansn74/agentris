@@ -8,6 +8,7 @@ import { deploymentRouter } from './deployment';
 import { auditRouter } from './audit';
 import { integrationRouter } from './integration';
 import { healthRouter } from './health';
+import { jiraRouter } from './jira';
 
 export const appRouter = router({
   auth: authRouter,
@@ -19,6 +20,7 @@ export const appRouter = router({
   audit: auditRouter,
   integration: integrationRouter,
   health: healthRouter,
+  jira: jiraRouter,
 });
 
 export type AppRouter = typeof appRouter;

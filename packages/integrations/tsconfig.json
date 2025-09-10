@@ -2,11 +2,11 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "jira/**/*"],
   "exclude": ["node_modules", "dist"]
 }

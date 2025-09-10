@@ -97,7 +97,7 @@ export function getCorsHeaders(origin: string | undefined, env?: string): Record
   if (origin && isOriginAllowed(origin, env)) {
     headers['Access-Control-Allow-Origin'] = origin;
   } else if (!Array.isArray(config.origin)) {
-    headers['Access-Control-Allow-Origin'] = config.origin as string;
+    headers['Access-Control-Allow-Origin'] = config.origin as unknown as string;
   }
 
   if (config.credentials) {

@@ -26,6 +26,7 @@ model User {
   role            Role      @default(CONSULTANT)
   emailVerified   DateTime?
   image           String?
+  organizationId  String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   lastActive      DateTime  @default(now())
@@ -35,6 +36,9 @@ model User {
   sessions        Session[]
   verificationTokens VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+  integrations    Integration[]
+  jiraOAuthStates JiraOAuthState[]
+  tickets         Ticket[]
 }
 
 // Account model for NextAuth OAuth
@@ -95,4 +99,106 @@ model PasswordResetToken {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Integration types enum
+enum IntegrationType {
+  JIRA
+  GITHUB
+  SALESFORCE
+}
+
+// Integration model for external service connections
+model Integration {
+  id        String          @id @default(cuid())
+  userId    String
+  type      IntegrationType
+  config    Json            // Stores encrypted tokens and configuration
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+}
+
+// Jira OAuth state for CSRF protection
+model JiraOAuthState {
+  id          String   @id @default(cuid())
+  state       String   @unique
+  userId      String
+  instanceUrl String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([state])
+  @@index([userId])
+}
+
+// Ticket status enum
+enum TicketStatus {
+  NEW
+  ANALYZING
+  CLARIFYING
+  READY
+  IMPLEMENTING
+  TESTING
+  COMPLETED
+  FAILED
+}
+
+// Organization model
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tickets Ticket[]
+}
+
+// Ticket model for Jira issues
+model Ticket {
+  id                 String       @id @default(cuid())
+  jiraKey            String       @unique
+  jiraId             String       @unique
+  summary            String
+  description        String       @db.Text
+  status             TicketStatus @default(NEW)
+  ambiguityScore     Float?
+  acceptanceCriteria String?      @db.Text
+  assignedToId       String
+  organizationId     String
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  // Relations
+  assignedTo     User           @relation(fields: [assignedToId], references: [id])
+  organization   Organization   @relation(fields: [organizationId], references: [id])
+  clarifications Clarification[]
+
+  @@index([jiraKey])
+  @@index([assignedToId])
+  @@index([status])
+}
+
+// Clarification model for Q&A on tickets
+model Clarification {
+  id        String   @id @default(cuid())
+  ticketId  String
+  question  String   @db.Text
+  answer    String?  @db.Text
+  source    String   // e.g., "JIRA_WEBHOOK", "MANUAL", "AI"
+  askedBy   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  ticket Ticket @relation(fields: [ticketId], references: [jiraKey])
+
+  @@index([ticketId])
 }

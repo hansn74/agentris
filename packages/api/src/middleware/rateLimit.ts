@@ -115,7 +115,7 @@ export function checkRateLimit(
         violations: violations + 1,
       });
 
-      const minutesRemaining = Math.ceil(((existing.resetTime - now) / 60000) * backoffMultiplier);
+      const minutesRemaining = Math.ceil(((existing.resetTime - now) / 60000) * (backoffMultiplier ?? 1));
       throw new TRPCError({
         code: 'TOO_MANY_REQUESTS',
         message: `Too many attempts. Please try again in ${minutesRemaining} minute${
