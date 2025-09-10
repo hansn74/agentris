@@ -2,8 +2,15 @@
   "name": "@agentris/api",
   "version": "0.1.0",
   "private": true,
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -19,8 +26,8 @@
     "@agentris/integrations": "workspace:*",
     "@agentris/shared": "workspace:*",
     "@prisma/client": "5.8.1",
-    "@trpc/client": "10.45.2",
-    "@trpc/server": "10.45.2",
+    "@trpc/client": "11.5.1",
+    "@trpc/server": "11.5.1",
     "bcryptjs": "^3.0.2",
     "nanoid": "^5.1.5",
     "next-auth": "4.24.11",
