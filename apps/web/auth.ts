@@ -8,7 +8,18 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
+// Auth.js v5 expects AUTH_SECRET, but support both for compatibility
+const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET;
+
+if (!authSecret && process.env.NODE_ENV === 'production') {
+  throw new Error(
+    'Authentication secret not found. Please set AUTH_SECRET or NEXTAUTH_SECRET in your .env file'
+  );
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: authSecret,
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {
