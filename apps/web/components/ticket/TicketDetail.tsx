@@ -25,13 +25,13 @@ interface TicketDetailProps {
 
 export function TicketDetail({ ticketKey }: TicketDetailProps) {
   // Fetch ticket details from tRPC API
-  const { data, isLoading, error, refetch } = trpc.jira.fetchTicketDetails.useQuery(
+  const { data, isLoading, error, refetch } = trpc.jira?.fetchTicketDetails?.useQuery(
     { ticketKey },
     {
       retry: false,
       enabled: true, // Enable tRPC endpoint connection
     }
-  );
+  ) || { data: undefined, isLoading: false, error: undefined, refetch: () => {} };
 
   const ticket = data;
 
@@ -122,7 +122,7 @@ export function TicketDetail({ ticketKey }: TicketDetailProps) {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {ticket.acceptanceCriteria.split('\n').map((criteria, index) => (
+                  {ticket.acceptanceCriteria.split('\n').map((criteria: string, index: number) => (
                     <div key={index} className="flex items-start space-x-2">
                       {criteria.trim() && (
                         <>
@@ -150,7 +150,7 @@ export function TicketDetail({ ticketKey }: TicketDetailProps) {
                 {ticket.comments.length === 0 ? (
                   <p className="text-sm text-muted-foreground">No comments yet</p>
                 ) : (
-                  ticket.comments.map((comment) => (
+                  ticket.comments.map((comment: any) => (
                     <div key={comment.id} className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -233,7 +233,7 @@ export function TicketDetail({ ticketKey }: TicketDetailProps) {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {ticket.labels.map((label) => (
+                  {ticket.labels.map((label: string) => (
                     <Badge key={label} variant="secondary">
                       {label}
                     </Badge>

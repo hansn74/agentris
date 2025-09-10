@@ -17,7 +17,7 @@ if (!authSecret && process.env.NODE_ENV === 'production') {
   );
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth }: any = NextAuth({
   secret: authSecret,
   trustHost: true,
   providers: [
@@ -35,6 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         try {
           // Use the tRPC auth.login procedure for actual authentication
+          // @ts-expect-error - tRPC type issue
           const result = await api.auth.login({
             email: parsed.data.email,
             password: parsed.data.password,

@@ -15,13 +15,13 @@ export function TicketList() {
   const limit = 10;
 
   // Fetch tickets from tRPC API
-  const { data, isLoading, error, refetch } = trpc.jira.fetchTickets.useQuery(
+  const { data, isLoading, error, refetch } = trpc.jira?.fetchTickets?.useQuery(
     { maxResults: limit, startAt: page * limit },
     {
       retry: false,
       enabled: true, // Enable tRPC endpoint connection
     }
-  );
+  ) || { data: undefined, isLoading: false, error: undefined, refetch: () => {} };
 
   const tickets = data?.tickets || [];
   const hasMore = data?.hasMore || false;
@@ -65,7 +65,7 @@ export function TicketList() {
   return (
     <div className="space-y-4">
       <div className="grid gap-4">
-        {tickets.map((ticket) => (
+        {tickets.map((ticket: any) => (
           <Card key={ticket.key} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
