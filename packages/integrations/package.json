@@ -13,6 +13,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint ."
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "jira.js": "^4.0.1",
+    "pino": "^9.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.13"
+  }
 }

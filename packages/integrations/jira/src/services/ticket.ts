@@ -59,13 +59,13 @@ export class TicketService {
       });
 
       logger.info('Tickets fetched successfully', {
-        count: response.issues?.length || 0,
-        total: response.total,
+        count: (response as any).issues?.length || 0,
+        total: (response as any).total,
       });
 
       return {
-        tickets: (response.issues || []) as unknown as JiraTicket[],
-        total: response.total || 0,
+        tickets: ((response as any).issues || []) as unknown as JiraTicket[],
+        total: (response as any).total || 0,
       };
     } catch (error) {
       logger.error('Failed to fetch user tickets', error);
@@ -128,10 +128,10 @@ export class TicketService {
           startAt,
         });
 
-        allComments.push(...((response.comments || []) as unknown as JiraComment[]));
+        allComments.push(...(((response as any).comments || []) as unknown as JiraComment[]));
 
         startAt += maxResults;
-        hasMore = startAt < (response.total || 0);
+        hasMore = startAt < ((response as any).total || 0);
       }
 
       logger.info('Comments fetched successfully', {
@@ -312,7 +312,7 @@ export class TicketService {
   public async checkProjectAccess(projectKey: string): Promise<boolean> {
     try {
       const projects = await this.client.getProjects();
-      return projects.values.some((project: any) => project.key === projectKey);
+      return (projects as any).values.some((project: any) => project.key === projectKey);
     } catch (error) {
       logger.error('Failed to check project access', { projectKey, error });
       return false;
