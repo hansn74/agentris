@@ -29,10 +29,10 @@ export class JiraAuthService {
 
     const url = `https://auth.atlassian.com/authorize?${params.toString()}`;
 
-    logger.info('Generated OAuth authorization URL', {
+    logger.info({
       instanceUrl: this.config.instanceUrl,
       scopes: this.config.scopes,
-    });
+    }, 'Generated OAuth authorization URL');
 
     return { url, state };
   }
@@ -41,7 +41,7 @@ export class JiraAuthService {
    * Handle OAuth callback and exchange code for tokens
    */
   public async callback(code: string, state: string): Promise<JiraOAuthTokens> {
-    logger.info('Processing OAuth callback', { state });
+    logger.info({ state }, 'Processing OAuth callback');
 
     try {
       const tokenResponse = await this.exchangeCodeForToken(code);
@@ -63,14 +63,14 @@ export class JiraAuthService {
         cloudId: cloudInstance.id,
       };
 
-      logger.info('OAuth tokens obtained successfully', {
+      logger.info({
         cloudId: cloudInstance.id,
         expiresAt: tokens.expiresAt,
-      });
+      }, 'OAuth tokens obtained successfully');
 
       return tokens;
     } catch (error) {
-      logger.error('OAuth callback failed', error);
+      logger.error(error as any, 'OAuth callback failed');
       throw error;
     }
   }
@@ -119,13 +119,13 @@ export class JiraAuthService {
         cloudId: cloudInstance.id,
       };
 
-      logger.info('Access token refreshed successfully', {
+      logger.info({
         expiresAt: tokens.expiresAt,
-      });
+      }, 'Access token refreshed successfully');
 
       return tokens;
     } catch (error) {
-      logger.error('Token refresh failed', error);
+      logger.error(error as any, 'Token refresh failed');
       throw error;
     }
   }
@@ -205,7 +205,7 @@ export class JiraAuthService {
 
       logger.info('OAuth tokens revoked successfully');
     } catch (error) {
-      logger.error('Token revocation failed', error);
+      logger.error(error as any, 'Token revocation failed');
       throw error;
     }
   }

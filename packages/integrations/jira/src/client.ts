@@ -42,20 +42,20 @@ export class JiraClient {
         logger.debug(`Jira operation successful: ${operationName}`);
         return result;
       } catch (error: any) {
-        logger.error(`Jira operation failed: ${operationName}`, {
+        logger.error({
           error: error.message,
           statusCode: error.status,
           attempt: this.retryCount + 1,
-        });
+        }, `Jira operation failed: ${operationName}`);
 
         // Handle rate limiting (429)
         if (error.status === 429) {
           if (this.retryCount < this.maxRetries) {
             const delay = this.calculateBackoffDelay();
-            logger.info(`Rate limited. Retrying in ${delay}ms...`, {
+            logger.info({
               attempt: this.retryCount + 1,
               maxRetries: this.maxRetries,
-            });
+            }, `Rate limited. Retrying in ${delay}ms...`);
 
             await this.sleep(delay);
             this.retryCount++;
@@ -68,10 +68,10 @@ export class JiraClient {
         if (this.isConnectionError(error)) {
           if (this.retryCount < this.maxRetries) {
             const delay = this.calculateBackoffDelay();
-            logger.info(`Connection error. Retrying in ${delay}ms...`, {
+            logger.info({
               attempt: this.retryCount + 1,
               maxRetries: this.maxRetries,
-            });
+            }, `Connection error. Retrying in ${delay}ms...`);
 
             await this.sleep(delay);
             this.retryCount++;

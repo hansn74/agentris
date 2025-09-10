@@ -36,7 +36,7 @@ export class TicketService {
 
       jql += ' ORDER BY updated DESC';
 
-      logger.info('Fetching user tickets', { jql, maxResults: options?.maxResults });
+      logger.info({ jql, maxResults: options?.maxResults }, 'Fetching user tickets');
 
       const response = await this.client.searchIssues(jql, {
         maxResults: options?.maxResults || 50,
@@ -58,17 +58,17 @@ export class TicketService {
         expand: ['renderedFields'],
       });
 
-      logger.info('Tickets fetched successfully', {
+      logger.info({
         count: (response as any).issues?.length || 0,
         total: (response as any).total,
-      });
+      }, 'Tickets fetched successfully');
 
       return {
         tickets: ((response as any).issues || []) as unknown as JiraTicket[],
         total: (response as any).total || 0,
       };
     } catch (error) {
-      logger.error('Failed to fetch user tickets', error);
+      logger.error(error as any, 'Failed to fetch user tickets');
       throw error;
     }
   }
@@ -78,7 +78,7 @@ export class TicketService {
    */
   public async fetchTicketDetails(ticketKey: string): Promise<JiraTicket> {
     try {
-      logger.info('Fetching ticket details', { ticketKey });
+      logger.info({ ticketKey }, 'Fetching ticket details');
 
       const issue = await this.client.getIssue(ticketKey, {
         fields: [
@@ -101,11 +101,11 @@ export class TicketService {
         expand: ['renderedFields', 'changelog'],
       });
 
-      logger.info('Ticket details fetched successfully', { ticketKey });
+      logger.info({ ticketKey }, 'Ticket details fetched successfully');
 
       return issue as unknown as JiraTicket;
     } catch (error) {
-      logger.error('Failed to fetch ticket details', { ticketKey, error });
+      logger.error({ ticketKey, error }, 'Failed to fetch ticket details');
       throw error;
     }
   }
@@ -115,7 +115,7 @@ export class TicketService {
    */
   public async fetchTicketComments(ticketKey: string): Promise<JiraComment[]> {
     try {
-      logger.info('Fetching ticket comments', { ticketKey });
+      logger.info({ ticketKey }, 'Fetching ticket comments');
 
       const allComments: JiraComment[] = [];
       let startAt = 0;
@@ -134,14 +134,14 @@ export class TicketService {
         hasMore = startAt < ((response as any).total || 0);
       }
 
-      logger.info('Comments fetched successfully', {
+      logger.info({
         ticketKey,
         count: allComments.length,
-      });
+      }, 'Comments fetched successfully');
 
       return allComments;
     } catch (error) {
-      logger.error('Failed to fetch ticket comments', { ticketKey, error });
+      logger.error({ ticketKey, error }, 'Failed to fetch ticket comments');
       throw error;
     }
   }
@@ -194,10 +194,10 @@ export class TicketService {
 
       return null;
     } catch (error) {
-      logger.error('Failed to extract acceptance criteria', {
+      logger.error({
         ticketKey: ticket.key,
         error,
-      });
+      }, 'Failed to extract acceptance criteria');
       return null;
     }
   }
@@ -278,7 +278,7 @@ export class TicketService {
    */
   public async syncTicket(ticketKey: string): Promise<JiraTicket> {
     try {
-      logger.info('Syncing ticket from Jira', { ticketKey });
+      logger.info({ ticketKey }, 'Syncing ticket from Jira');
 
       // Fetch the latest ticket data
       const ticket = await this.fetchTicketDetails(ticketKey);
@@ -294,14 +294,14 @@ export class TicketService {
         };
       }
 
-      logger.info('Ticket synced successfully', {
+      logger.info({
         ticketKey,
         commentsCount: comments.length,
-      });
+      }, 'Ticket synced successfully');
 
       return ticket;
     } catch (error) {
-      logger.error('Failed to sync ticket', { ticketKey, error });
+      logger.error({ ticketKey, error }, 'Failed to sync ticket');
       throw error;
     }
   }
@@ -314,7 +314,7 @@ export class TicketService {
       const projects = await this.client.getProjects();
       return (projects as any).values.some((project: any) => project.key === projectKey);
     } catch (error) {
-      logger.error('Failed to check project access', { projectKey, error });
+      logger.error({ projectKey, error }, 'Failed to check project access');
       return false;
     }
   }

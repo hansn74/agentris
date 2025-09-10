@@ -176,10 +176,10 @@ export class CircuitBreaker {
         logger.warn('Circuit breaker tripped from HALF_OPEN to OPEN');
       } else if (this.failureCount >= this.failureThreshold) {
         this.trip();
-        logger.warn('Circuit breaker tripped to OPEN state', {
+        logger.warn({
           failureCount: this.failureCount,
           threshold: this.failureThreshold,
-        });
+        }, 'Circuit breaker tripped to OPEN state');
       }
     }
   }
@@ -316,15 +316,15 @@ export class ErrorRecovery {
     };
 
     if (error instanceof JiraAuthenticationError || error instanceof JiraPermissionError) {
-      logger.error('Jira authorization error', errorInfo);
+      logger.error(errorInfo, 'Jira authorization error');
     } else if (error instanceof JiraRateLimitError) {
-      logger.warn('Jira rate limit hit', errorInfo);
+      logger.warn(errorInfo, 'Jira rate limit hit');
     } else if (error instanceof JiraConnectionError) {
-      logger.error('Jira connection error', errorInfo);
+      logger.error(errorInfo, 'Jira connection error');
     } else if (error instanceof JiraValidationError) {
-      logger.warn('Jira validation error', { ...errorInfo, errors: error.errors });
+      logger.warn({ ...errorInfo, errors: error.errors }, 'Jira validation error');
     } else {
-      logger.error('Unexpected Jira error', errorInfo);
+      logger.error(errorInfo, 'Unexpected Jira error');
     }
   }
 }
