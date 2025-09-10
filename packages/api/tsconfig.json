@@ -3,12 +3,12 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noEmit": false,
     "composite": true
   },
-  "references": [{ "path": "../auth" }, { "path": "../db" }, { "path": "../shared" }],
+  "references": [{ "path": "../auth" }, { "path": "../db" }, { "path": "../shared" }, { "path": "../integrations" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

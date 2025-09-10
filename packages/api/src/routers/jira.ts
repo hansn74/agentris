@@ -483,10 +483,7 @@ export const jiraRouter = router({
         // direct access to raw request headers
 
         const payload = input as JiraWebhookPayload;
-        logger.info('Received Jira webhook', {
-          event: payload.webhookEvent,
-          issueKey: payload.issue?.key
-        });
+        logger.info('Received Jira webhook: ' + payload.webhookEvent);
 
         // Handle different webhook events
         switch (payload.webhookEvent) {
@@ -543,7 +540,7 @@ export const jiraRouter = router({
             break;
 
           default:
-            logger.info('Unhandled webhook event', { event: payload.webhookEvent });
+            logger.info('Unhandled webhook event: ' + payload.webhookEvent);
         }
 
         return { success: true };

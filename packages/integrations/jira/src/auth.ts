@@ -102,10 +102,14 @@ export class JiraAuthService {
         throw new Error(`Token refresh failed: ${error}`);
       }
 
-      const tokenResponse = await response.json();
+      const tokenResponse = await response.json() as {
+        access_token: string;
+        refresh_token?: string;
+        expires_in: number;
+      };
 
       // Get cloud ID from accessible resources
-      const accessibleResources = await this.getAccessibleResources(tokenResponse.access_token);
+      const accessibleResources = await this.getAccessibleResources(tokenResponse.access_token) as any[];
       const cloudInstance = accessibleResources[0];
 
       const tokens: JiraOAuthTokens = {
@@ -170,7 +174,7 @@ export class JiraAuthService {
       throw new Error(`Failed to get accessible resources: ${error}`);
     }
 
-    return response.json();
+    return response.json() as Promise<any[]>;
   }
 
   /**

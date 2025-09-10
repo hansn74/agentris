@@ -188,6 +188,9 @@ importers:
       '@agentris/db':
         specifier: workspace:*
         version: link:../db
+      '@agentris/integrations':
+        specifier: workspace:*
+        version: link:../integrations
       '@agentris/shared':
         specifier: workspace:*
         version: link:../shared

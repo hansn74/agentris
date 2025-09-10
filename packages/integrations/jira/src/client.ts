@@ -22,7 +22,6 @@ export class JiraClient {
           accessToken: tokens.accessToken,
         },
       },
-      telemetry: false,
     });
     this.circuitBreaker = new CircuitBreaker();
   }
@@ -132,7 +131,6 @@ export class JiraClient {
           accessToken: newAccessToken,
         },
       },
-      telemetry: false,
     });
     logger.info('Jira client access token updated');
   }
@@ -220,23 +218,21 @@ export class JiraClient {
         this.client.issueComments.addComment({
           issueIdOrKey: issueKey,
           body: {
-            body: {
-              type: 'doc',
-              version: 1,
-              content: [
-                {
-                  type: 'paragraph',
-                  content: [
-                    {
-                      type: 'text',
-                      text: comment,
-                    },
-                  ],
-                },
-              ],
-            },
+            type: 'doc',
+            version: 1,
+            content: [
+              {
+                type: 'paragraph',
+                content: [
+                  {
+                    type: 'text',
+                    text: comment,
+                  },
+                ],
+              },
+            ],
           },
-        }),
+        } as any),
       `addComment: ${issueKey}`
     );
   }

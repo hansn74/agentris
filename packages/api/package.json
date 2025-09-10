@@ -16,6 +16,7 @@
   "dependencies": {
     "@agentris/auth": "workspace:*",
     "@agentris/db": "workspace:*",
+    "@agentris/integrations": "workspace:*",
     "@agentris/shared": "workspace:*",
     "@prisma/client": "5.8.1",
     "@trpc/client": "10.45.2",

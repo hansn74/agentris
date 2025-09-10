@@ -114,8 +114,8 @@ describe('Jira Webhook Handler', () => {
       };
 
       expect(payload.webhookEvent).toBe('jira:issue_updated');
-      expect(payload.changelog?.items[0].field).toBe('status');
-      expect(payload.changelog?.items[0].toString).toBe('In Progress');
+      expect(payload.changelog?.items?.[0]?.field).toBe('status');
+      expect(payload.changelog?.items?.[0]?.toString).toBe('In Progress');
     });
 
     it('should parse comment created event', () => {

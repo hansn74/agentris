@@ -2,7 +2,7 @@ import type { JiraTicket } from '../types';
 import { TicketService } from '../services/ticket';
 
 // Define the internal Ticket model interface based on the story documentation
-interface InternalTicket {
+export interface InternalTicket {
   jiraKey: string;
   jiraId: string;
   summary: string;
@@ -123,7 +123,7 @@ export function mapJiraTicketToInternal(
   } else {
     // Fallback - check the default custom field location
     const customFieldId = process.env.JIRA_FIELD_ACCEPTANCE_CRITERIA || 'customfield_10000';
-    acceptanceCriteria = jiraTicket.fields[customFieldId] || null;
+    acceptanceCriteria = (jiraTicket.fields as any)[customFieldId] || null;
   }
 
   // Map comments

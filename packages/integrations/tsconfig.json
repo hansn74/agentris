@@ -5,7 +5,8 @@
     "rootDir": "./",
     "module": "commonjs",
     "moduleResolution": "node",
-    "noEmit": false
+    "noEmit": false,
+    "composite": true
   },
   "include": ["src/**/*", "jira/**/*"],
   "exclude": ["node_modules", "dist"]

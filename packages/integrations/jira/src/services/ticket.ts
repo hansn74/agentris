@@ -59,13 +59,13 @@ export class TicketService {
       });
 
       logger.info('Tickets fetched successfully', {
-        count: response.issues.length,
+        count: response.issues?.length || 0,
         total: response.total,
       });
 
       return {
-        tickets: response.issues as JiraTicket[],
-        total: response.total,
+        tickets: (response.issues || []) as unknown as JiraTicket[],
+        total: response.total || 0,
       };
     } catch (error) {
       logger.error('Failed to fetch user tickets', error);
@@ -103,7 +103,7 @@ export class TicketService {
 
       logger.info('Ticket details fetched successfully', { ticketKey });
 
-      return issue as JiraTicket;
+      return issue as unknown as JiraTicket;
     } catch (error) {
       logger.error('Failed to fetch ticket details', { ticketKey, error });
       throw error;
@@ -128,10 +128,10 @@ export class TicketService {
           startAt,
         });
 
-        allComments.push(...(response.comments as JiraComment[]));
+        allComments.push(...((response.comments || []) as unknown as JiraComment[]));
 
         startAt += maxResults;
-        hasMore = startAt < response.total;
+        hasMore = startAt < (response.total || 0);
       }
 
       logger.info('Comments fetched successfully', {
@@ -152,7 +152,7 @@ export class TicketService {
   public extractAcceptanceCriteria(ticket: JiraTicket): string | null {
     try {
       // First check custom field (if configured)
-      const customFieldValue = ticket.fields[CUSTOM_FIELDS.acceptanceCriteria];
+      const customFieldValue = (ticket.fields as any)[CUSTOM_FIELDS.acceptanceCriteria];
       if (customFieldValue) {
         return customFieldValue;
       }

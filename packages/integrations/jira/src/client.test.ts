@@ -10,7 +10,7 @@ describe('JiraClient', () => {
   let client: JiraClient;
   let tokens: JiraOAuthTokens;
   let mockJiraClient: any;
-  let mockVersion3Client: MockedFunction<typeof Version3Client>;
+  let mockVersion3Client: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,7 +38,7 @@ describe('JiraClient', () => {
     };
 
     // Mock the Version3Client constructor
-    mockVersion3Client = vi.mocked(Version3Client);
+    mockVersion3Client = vi.mocked(Version3Client as any);
     mockVersion3Client.mockImplementation(() => mockJiraClient as any);
 
     tokens = {
