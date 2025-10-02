@@ -298,10 +298,9 @@ export class RecommendationEngine {
         data: {
           ticketId,
           type: 'COMPLEXITY',
-          findings: {},
+          findings: { recommendations: recommendations } as any,
           score: 0.5,
-          confidence: 0.7,
-          suggestions: recommendations as any
+          confidence: 0.7
         }
       });
     }
@@ -319,14 +318,17 @@ export class RecommendationEngine {
       .replace('{patterns}', JSON.stringify(patterns))
       .replace('{proposedChanges}', JSON.stringify(context.proposedChanges || {}));
 
-    const response = await this.llmService.generateResponse({
-      prompt,
-      temperature: 0.4,
-      maxTokens: 1500
-    });
+    const response = await this.llmService.generateResponse(
+      [{ role: 'user', content: prompt }],
+      {
+        temperature: 0.4,
+        maxTokens: 1500
+      }
+    );
 
     try {
-      const result = JSON.parse(response);
+      const responseContent = typeof response === 'string' ? response : response.content;
+      const result = JSON.parse(responseContent);
       await this.cacheRecommendations(context.ticketId, result.recommendations);
       return result.recommendations;
     } catch (error) {
