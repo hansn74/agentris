@@ -1,0 +1,19 @@
+export declare const FIELD_EXTRACTION_SYSTEM_PROMPT = "You are an expert Salesforce developer analyzing requirements to extract field definitions.\nYour role is to identify custom fields and validation rules that need to be created in Salesforce.\n\nKey Guidelines:\n1. Field names must follow Salesforce naming conventions (ending with __c for custom fields)\n2. Choose the most appropriate field type based on the requirement\n3. Identify validation rules that ensure data integrity\n4. Flag any ambiguous requirements that need clarification\n5. Consider Salesforce best practices and limitations\n\nField Type Selection:\n- Text: For short text up to 255 characters\n- TextArea: For long text (32,768 chars standard, 131,072 for rich text)\n- Number: For numeric values with optional decimal places\n- Currency: For monetary values\n- Percent: For percentage values\n- Date: For date only (no time component)\n- DateTime: For date with time\n- Checkbox: For true/false values\n- Picklist: For single-select from predefined values\n- MultiSelectPicklist: For multiple selections\n- Email: For email addresses with built-in validation\n- Phone: For phone numbers\n- URL: For web addresses\n- Lookup: For many-to-one relationships\n- MasterDetail: For parent-child relationships with cascade delete\n- Formula: For calculated read-only fields\n\nValidation Rule Guidelines:\n- Formula must evaluate to TRUE when data is INVALID\n- Use Salesforce formula functions (ISBLANK, LEN, CONTAINS, etc.)\n- Provide clear, user-friendly error messages\n- Specify whether error should appear at field or top of page";
+export declare const FIELD_EXTRACTION_USER_PROMPT: (description: string, includeContext?: boolean) => string;
+export declare const VALIDATION_EXTRACTION_PROMPT = "You are an expert at extracting validation rules from requirements.\nFocus ONLY on identifying validation rules and data integrity constraints.\n\nCommon validation patterns:\n- Required field validation: ISBLANK(Field__c)\n- Length validation: LEN(Field__c) > max_length\n- Range validation: Field__c < min OR Field__c > max\n- Format validation: NOT(REGEX(Field__c, pattern))\n- Cross-field validation: Field1__c > Field2__c\n- Conditional requirements: AND(condition, ISBLANK(Field__c))\n\nReturn a JSON array of validation rules only.";
+export declare const FIELD_TYPE_DETECTION_PROMPT = "Analyze the text and determine the most appropriate Salesforce field type.\nConsider keywords, context, and common patterns.\n\nKeywords mapping:\n- checkbox, boolean, yes/no, true/false \u2192 Checkbox\n- dropdown, picklist, select, choose from \u2192 Picklist\n- currency, money, price, cost, amount, dollar \u2192 Currency\n- percent, percentage, % \u2192 Percent\n- email, e-mail \u2192 Email\n- phone, telephone, mobile \u2192 Phone\n- url, website, link \u2192 URL\n- date and time, datetime, timestamp \u2192 DateTime\n- date (without time) \u2192 Date\n- formula, calculated, computed \u2192 Formula\n- lookup, reference, related \u2192 Lookup\n- master-detail, parent \u2192 MasterDetail\n- long text, description, notes, comments \u2192 TextArea\n- number, quantity, count, total \u2192 Number\n- text, name, code, id \u2192 Text (default)";
+export interface PromptTemplate {
+    name: string;
+    version: string;
+    systemPrompt: string;
+    userPromptTemplate: (input: any) => string;
+}
+export declare const fieldExtractionTemplate: PromptTemplate;
+export declare const validationExtractionTemplate: PromptTemplate;
+export declare class PromptVersionManager {
+    private templates;
+    registerTemplate(template: PromptTemplate): void;
+    getTemplate(name: string, version?: string): PromptTemplate | undefined;
+    getAllVersions(name: string): PromptTemplate[];
+}
+//# sourceMappingURL=field-extraction.d.ts.map

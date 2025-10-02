@@ -5,7 +5,7 @@
 **Integration Requirements:**
 
 - **FR1:** The system shall integrate with Jira API to read ticket descriptions, acceptance criteria, comments, and attachments in real-time
-- **FR2:** The system shall authenticate with Salesforce orgs using Salesforce CLI with one-time consultant authorization
+- **FR2:** The system shall authenticate with Salesforce orgs using JSForce OAuth 2.0 with one-time consultant authorization
 - **FR3:** The system shall commit all changes to Bitbucket with feature branches, meaningful commit messages, and pull request creation
 - **FR4:** The system shall integrate with Confluence to search and reference documentation when analyzing tickets
 - **FR5:** The system shall support single-org deployments per ticket (multi-org orchestration excluded from MVP)

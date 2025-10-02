@@ -1,0 +1,148 @@
+---
+gate_decision: PASS_WITH_CONCERNS
+story_id: "3.4"
+story_title: "Intelligent Preview Generator"
+review_date: "2025-09-22"
+reviewer: "Quinn (Test Architect)"
+quality_score: 82
+
+acceptance_criteria_status:
+  - ac_id: "AC1"
+    description: "Detect change type and select preview format"
+    status: "PASS"
+    evidence: "ChangeDetector service with 15 patterns, confidence scoring"
+    
+  - ac_id: "AC2"
+    description: "Generate diagrams for Flow Builder automations"
+    status: "PASS"
+    evidence: "DiagramView with mermaid.js, tested in preview-generator.test.ts"
+    
+  - ac_id: "AC3"
+    description: "Create mock screenshots for page layout changes"
+    status: "PASS"
+    evidence: "MockupView component with field type support"
+    
+  - ac_id: "AC4"
+    description: "Show code diffs for Apex modifications"
+    status: "PASS"
+    evidence: "CodeDiffView with line numbers and change indicators"
+    
+  - ac_id: "AC5"
+    description: "Produce dependency graphs for complex changes"
+    status: "PASS"
+    evidence: "DependencyGraph with relationship mapping"
+    
+  - ac_id: "AC6"
+    description: "Allow switching between preview formats"
+    status: "PASS"
+    evidence: "PreviewViewer with format switcher, tRPC endpoints"
+
+test_coverage:
+  unit_tests:
+    total: 28
+    passing: 28
+    coverage_percent: 85
+    
+  integration_tests:
+    status: "MISSING"
+    recommendation: "Add E2E test suite"
+    
+  key_test_files:
+    - "change-detector.test.ts (16 tests)"
+    - "preview-generator.test.ts (12 tests)"
+
+security_issues:
+  critical:
+    - issue: "XSS vulnerability via dangerouslySetInnerHTML"
+      components: ["MockupView", "TextView"]
+      recommendation: "Implement DOMPurify sanitization"
+      severity: "HIGH"
+      
+    - issue: "No rate limiting on AI generation"
+      endpoint: "generateIntelligentPreview"
+      recommendation: "Add rate limiting middleware"
+      severity: "MEDIUM"
+      
+  warnings:
+    - issue: "z.any() schema validation"
+      location: "API router metadata handling"
+      recommendation: "Define strict schemas"
+      severity: "LOW"
+
+performance_assessment:
+  strengths:
+    - "Sub-second change detection"
+    - "Efficient preview caching"
+    - "Lazy component loading"
+    
+  concerns:
+    - "Mermaid.js rendering for large diagrams"
+    - "No virtualization for large graphs"
+    - "Missing loading states during render"
+
+code_quality:
+  strengths:
+    - "Clean separation of concerns"
+    - "Comprehensive type safety"
+    - "Good error handling"
+    - "Consistent patterns"
+    
+  issues:
+    - "Magic numbers in confidence calculation"
+    - "Some any types remain"
+    - "Missing JSDoc comments"
+    
+  technical_debt:
+    - "Confidence calculation algorithm needs refinement"
+    - "Preview format mapping could be simplified"
+    - "Some duplication in view components"
+
+required_actions:
+  must_fix:
+    - "Add HTML sanitization to prevent XSS"
+    - "Implement rate limiting on preview generation"
+    
+  should_fix:
+    - "Replace z.any() with proper schemas"
+    - "Add E2E integration tests"
+    - "Add JSDoc comments for public APIs"
+    
+  nice_to_have:
+    - "Add virtualization for large graphs"
+    - "Implement preview pre-generation"
+    - "Add performance monitoring"
+
+risk_matrix:
+  high_risk:
+    - "XSS vulnerability in UI components"
+    - "Resource exhaustion via unlimited generation"
+    
+  medium_risk:
+    - "LLM response parsing failures"
+    - "Preview expiration edge cases"
+    
+  low_risk:
+    - "Change detection accuracy"
+    - "Format selection logic"
+
+recommendations:
+  immediate:
+    - "Security hardening before production"
+    - "Rate limiting implementation"
+    
+  short_term:
+    - "E2E test suite development"
+    - "Schema validation improvements"
+    
+  long_term:
+    - "Performance optimization for large previews"
+    - "Preview caching strategy"
+    - "Monitoring and alerting setup"
+
+decision_rationale: |
+  The story successfully implements all acceptance criteria with good overall quality.
+  The change detection and preview generation architecture is well-designed and extensible.
+  Security concerns around XSS and rate limiting must be addressed before production.
+  The implementation shows good engineering practices but needs security hardening.
+  
+final_verdict: "APPROVED WITH CONDITIONS - Security fixes required before production deployment"

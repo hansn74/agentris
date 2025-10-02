@@ -7,8 +7,17 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.9"
+  },
+  "devDependencies": {
+    "@types/ioredis": "^5.0.0",
+    "@vitest/ui": "^3.2.4",
+    "ioredis": "^5.8.0",
+    "vitest": "^3.2.4",
+    "zod": "^4.1.8"
+  }
 }

@@ -1,0 +1,132 @@
+# Quality Gate Decision - Updated Review
+schema: 1
+story: '2.1'
+story_title: 'Salesforce Authentication Service'
+gate: PASS
+status_reason: 'All critical security issues resolved with database-backed state management, comprehensive security event logging, and proper rate limiting. Minor scalability concerns don''t block initial production deployment.'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-09-11T14:35:00Z'
+
+# No waiver needed
+waiver:
+  active: false
+
+# Minor issues that don't block release
+top_issues:
+  - severity: medium
+    issue: 'Rate limiting uses in-memory storage'
+    details: 'In-memory Map for rate limiting won't scale across multiple server instances'
+    refs: ['packages/api/src/routers/salesforce.ts:14-70']
+    suggested_owner: 'dev'
+  - severity: low
+    issue: 'Security event retention hardcoded'
+    details: 'Retention policy for security events is hardcoded to 90 days, should be configurable'
+    refs: ['packages/api/src/services/security-events.ts:205']
+    suggested_owner: 'dev'
+
+# Quality metrics
+quality_score: 85  # 100 - (0*20 FAILs) - (1*10 medium) - (1*5 low)
+expires: '2025-09-25T14:35:00Z'  # Two weeks validity
+
+evidence:
+  tests_reviewed: 47
+  risks_identified: 2
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6]  # All ACs have test coverage
+    ac_gaps: []  # No gaps
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'Excellent - Database-backed CSRF protection, domain validation, rate limiting, encryption, comprehensive security event logging all implemented'
+  performance:
+    status: PASS
+    notes: 'Good - Efficient token refresh with exponential backoff, scheduled cleanup tasks, proper database indexing'
+  reliability:
+    status: PASS
+    notes: 'Good - Exponential backoff with jitter implemented, comprehensive error handling, automatic state cleanup'
+  maintainability:
+    status: PASS
+    notes: 'Excellent - Clean separation of concerns with dedicated services, well-structured code, comprehensive logging'
+
+risk_summary:
+  totals:
+    critical: 0
+    high: 0
+    medium: 1  # Scalability concern with in-memory rate limiting
+    low: 1     # Configuration flexibility
+  recommendations:
+    must_fix: []  # Nothing blocking production for single-instance deployment
+    monitor:
+      - "Rate limit effectiveness as user base grows"
+      - "Security event volume for alerting thresholds"
+      - "Token refresh failures for any patterns"
+
+recommendations:
+  immediate: []  # No blockers for initial production deployment
+  future:
+    - action: 'Migrate rate limiting to Redis for multi-instance support'
+      refs: ['packages/api/src/routers/salesforce.ts:14-70']
+    - action: 'Add OpenTelemetry instrumentation for observability'
+      refs: ['packages/integrations/salesforce/src/']
+    - action: 'Implement email/SMS alerts for security events'
+      refs: ['packages/api/src/services/security-events.ts:124-146']
+    - action: 'Add refresh token rotation for enhanced security'
+      refs: ['packages/integrations/salesforce/src/auth.ts:232-273']
+    - action: 'Configure security event retention via environment variables'
+      refs: ['packages/api/src/services/security-events.ts:205']
+
+refactoring_performed:
+  initial_review:
+    - file: 'packages/integrations/salesforce/src/auth.ts'
+      changes:
+        - 'Added CSRF state validation'
+        - 'Removed sensitive data from logs'
+        - 'Added Salesforce domain validation'
+        - 'Fixed TypeScript type issues'
+    - file: 'packages/api/src/routers/salesforce.ts'
+      changes:
+        - 'Implemented rate limiting'
+        - 'Added state token validation'
+    - file: 'packages/integrations/salesforce/src/*.test.ts'
+      changes:
+        - 'Fixed all test mocks for jsforce'
+  current_review:
+    - file: 'packages/api/src/services/salesforce-state.ts'
+      changes:
+        - 'Added database-backed state management service'
+        - 'Implemented automatic cleanup of expired states'
+    - file: 'packages/api/src/services/security-events.ts'
+      changes:
+        - 'Created comprehensive security event logging service'
+        - 'Added alerting thresholds and monitoring'
+    - file: 'packages/integrations/salesforce/src/token-refresh.ts'
+      changes:
+        - 'Implemented exponential backoff with jitter'
+        - 'Added configurable retry logic'
+
+test_results:
+  total: 47
+  passed: 47
+  failed: 0
+  coverage_estimate: '89%'
+  
+security_findings:
+  fixed:
+    - 'CRITICAL: Missing CSRF protection - Now uses database-backed state validation'
+    - 'HIGH: No instance URL validation - Domain validation implemented'
+    - 'MEDIUM: No rate limiting - Comprehensive rate limiting added'
+    - 'MEDIUM: In-memory state store - Replaced with database-backed solution'
+    - 'LOW: Sensitive data in logs - All PII removed from logging'
+    - 'LOW: No exponential backoff - Implemented with jitter'
+  remaining:
+    - 'MEDIUM: Rate limit storage in-memory (won't scale horizontally)'
+    - 'LOW: Security event alerting only via logs (needs email/SMS for production)'
+
+history:
+  - at: "2025-09-11T10:00:00Z"
+    gate: CONCERNS
+    note: "Initial review - critical security issues found, fixes implemented"
+  - at: "2025-09-11T14:35:00Z"
+    gate: PASS
+    note: "Second review - all critical issues resolved, production ready with minor scalability notes"

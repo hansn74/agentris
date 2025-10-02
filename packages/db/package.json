@@ -8,15 +8,22 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "db:push": "npx dotenv-cli -e ../../.env -- prisma db push",
     "db:generate": "npx dotenv-cli -e ../../.env -- prisma generate",
     "db:studio": "npx dotenv-cli -e ../../.env -- prisma studio"
   },
   "dependencies": {
     "@prisma/client": "5.8.1",
-    "prisma": "5.8.1"
+    "pino": "^9.9.5",
+    "prisma": "5.8.1",
+    "zod": "^4.1.8"
   },
   "devDependencies": {
-    "dotenv-cli": "^10.0.0"
+    "@types/node": "^24.4.0",
+    "dotenv-cli": "^10.0.0",
+    "vitest": "^3.2.4",
+    "vitest-mock-extended": "^3.1.0"
   }
 }

@@ -2,15 +2,21 @@ import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { type Session } from 'next-auth';
 import { prisma } from '@agentris/db';
+import { observable } from '@trpc/server/observable';
+import { EventEmitter } from 'events';
 
 interface CreateContextOptions {
   session: Session | null;
 }
 
+// Create a global event emitter for subscriptions
+export const ee = new EventEmitter();
+
 export const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    ee,
   };
 };
 
@@ -88,3 +94,6 @@ export const requireConsultant = t.procedure
   .use(requireRole('CONSULTANT'));
 export const requireManager = t.procedure.use(enforceUserIsAuthed).use(requireRole('MANAGER'));
 export const requireAdmin = t.procedure.use(enforceUserIsAuthed).use(requireRole('ADMIN'));
+
+// Aliases for consistency
+export const adminProcedure = requireAdmin;

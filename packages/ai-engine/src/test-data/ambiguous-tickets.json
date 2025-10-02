@@ -1,0 +1,109 @@
+{
+  "testTickets": [
+    {
+      "id": "test-1",
+      "text": "Make the application faster",
+      "expectedScore": 0.8,
+      "expectedPatterns": ["VAGUE_TERMS", "MISSING_INFO", "MISSING_ACCEPTANCE_CRITERIA"],
+      "description": "Extremely vague requirement with no specifics"
+    },
+    {
+      "id": "test-2",
+      "text": "As a user, I want to login to the system quickly and easily so I can access my data",
+      "expectedScore": 0.7,
+      "expectedPatterns": ["VAGUE_TERMS", "MISSING_ACCEPTANCE_CRITERIA", "UNCLEAR_SCOPE"],
+      "description": "Missing authentication method, no success criteria"
+    },
+    {
+      "id": "test-3",
+      "text": "The system must be highly secure but also allow guest access without authentication",
+      "expectedScore": 0.9,
+      "expectedPatterns": ["CONFLICTING_REQUIREMENTS", "UNCLEAR_SCOPE"],
+      "description": "Direct conflict between security and access requirements"
+    },
+    {
+      "id": "test-4",
+      "text": "Add a button labeled 'Submit' that sends the form data to the /api/submit endpoint when clicked. The button should be disabled while submitting and show a loading spinner. On success, display a success message for 3 seconds.",
+      "expectedScore": 0.1,
+      "expectedPatterns": [],
+      "description": "Clear, specific requirements with acceptance criteria"
+    },
+    {
+      "id": "test-5",
+      "text": "Improve the user experience of the checkout process",
+      "expectedScore": 0.85,
+      "expectedPatterns": ["VAGUE_TERMS", "MISSING_ACCEPTANCE_CRITERIA", "UNCLEAR_SCOPE"],
+      "description": "No specific improvements identified"
+    },
+    {
+      "id": "test-6",
+      "text": "The report should generate quickly with good performance and be user-friendly",
+      "expectedScore": 0.75,
+      "expectedPatterns": ["VAGUE_TERMS", "MISSING_INFO"],
+      "description": "Multiple vague terms, no metrics"
+    },
+    {
+      "id": "test-7",
+      "text": "Implement SSO authentication using SAML 2.0 with our Okta instance. Support SP-initiated flow only. Session timeout after 8 hours of inactivity. Display user's email and name from SAML attributes.",
+      "expectedScore": 0.05,
+      "expectedPatterns": [],
+      "description": "Specific technical requirements"
+    },
+    {
+      "id": "test-8",
+      "text": "The API should handle many requests",
+      "expectedScore": 0.8,
+      "expectedPatterns": ["VAGUE_TERMS", "MISSING_INFO", "MISSING_ACCEPTANCE_CRITERIA"],
+      "description": "No specific performance requirements"
+    },
+    {
+      "id": "test-9",
+      "text": "Build a dashboard with various widgets showing different metrics and KPIs",
+      "expectedScore": 0.65,
+      "expectedPatterns": ["UNCLEAR_SCOPE", "MISSING_INFO"],
+      "description": "Unspecified widgets and metrics"
+    },
+    {
+      "id": "test-10",
+      "text": "As an admin, I need to manage users. This includes creating, updating, and deleting users. Also need to assign roles and permissions. The interface should be intuitive.",
+      "expectedScore": 0.4,
+      "expectedPatterns": ["VAGUE_TERMS", "MISSING_ACCEPTANCE_CRITERIA"],
+      "description": "Some specifics but vague UI requirements"
+    },
+    {
+      "id": "test-11",
+      "text": "Optimize database queries for better performance. Some queries are slow.",
+      "expectedScore": 0.7,
+      "expectedPatterns": ["VAGUE_TERMS", "UNCLEAR_SCOPE", "MISSING_INFO"],
+      "description": "Which queries? What performance target?"
+    },
+    {
+      "id": "test-12",
+      "text": "Add pagination to the products list. Display 20 items per page with next/previous buttons. Show current page number and total pages. Allow jumping to specific page.",
+      "expectedScore": 0.1,
+      "expectedPatterns": [],
+      "description": "Clear pagination requirements"
+    },
+    {
+      "id": "test-13",
+      "text": "The mobile app should work offline but sync data in real-time when online",
+      "expectedScore": 0.6,
+      "expectedPatterns": ["CONFLICTING_REQUIREMENTS", "MISSING_INFO"],
+      "description": "Conflict between offline and real-time, missing sync details"
+    },
+    {
+      "id": "test-14",
+      "text": "Integrate with the payment system",
+      "expectedScore": 0.9,
+      "expectedPatterns": ["MISSING_INFO", "UNCLEAR_SCOPE", "MISSING_ACCEPTANCE_CRITERIA"],
+      "description": "No payment system specified, no integration details"
+    },
+    {
+      "id": "test-15",
+      "text": "Create REST API endpoint POST /api/orders that accepts JSON payload with orderItems array, customerId, and shippingAddress. Validate all fields, return 201 with order ID on success, 400 for validation errors.",
+      "expectedScore": 0.05,
+      "expectedPatterns": [],
+      "description": "Specific API requirements"
+    }
+  ]
+}

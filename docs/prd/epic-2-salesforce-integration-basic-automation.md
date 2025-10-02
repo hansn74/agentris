@@ -10,7 +10,7 @@
 
 **Acceptance Criteria:**
 
-1. Salesforce CLI integration implemented for OAuth flow
+1. JSForce OAuth 2.0 flow implemented for Salesforce authentication
 2. One-time authorization per org with token storage
 3. Support for both sandbox and production orgs
 4. Connection testing endpoint validates org access

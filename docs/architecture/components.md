@@ -25,9 +25,9 @@
 - `retrieveMetadata()` - Fetch org configuration
 - `runTests()` - Execute Apex tests
 
-**Dependencies:** JSForce, Salesforce CLI, Database
+**Dependencies:** JSForce, Database
 
-**Technology Stack:** TypeScript, JSForce, child_process for CLI
+**Technology Stack:** TypeScript, JSForce 3.x
 
 ## Jira Integration Module
 

@@ -48,6 +48,49 @@ export const RATE_LIMIT_CONFIG = {
     maxAttempts: 10,
     tier: 'ai',
   },
+  // Preview generation limits
+  previewGeneration: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 20,
+    tier: 'ai',
+  },
+  previewSwitch: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 50,
+    tier: 'ai',
+  },
+  // LLM specific endpoints
+  llmAnalyze: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 20,
+    tier: 'llm',
+  },
+  llmGenerate: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 30,
+    tier: 'llm',
+  },
+  llmStream: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 10,
+    tier: 'llm',
+  },
+  // Automation endpoints (high cost AI operations)
+  automationParsing: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 20,
+    tier: 'automation',
+  },
+  automationGeneration: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 15,
+    tier: 'automation',
+  },
+  automationDeployment: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 5,
+    tier: 'automation',
+  },
   salesforceSync: {
     windowMs: 60 * 60 * 1000, // 1 hour
     maxAttempts: 5,
@@ -57,6 +100,22 @@ export const RATE_LIMIT_CONFIG = {
     windowMs: 60 * 60 * 1000, // 1 hour
     maxAttempts: 3,
     tier: 'deployment',
+  },
+  // Approval endpoints
+  approvalModify: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 30,
+    tier: 'approval',
+  },
+  approvalBulk: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 10,
+    tier: 'approval',
+  },
+  approvalStandard: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxAttempts: 50,
+    tier: 'approval',
   },
 } as const;
 

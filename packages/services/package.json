@@ -7,8 +7,19 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@agentris/ai-engine": "workspace:*",
+    "@agentris/db": "workspace:*",
+    "@agentris/integrations-salesforce": "workspace:*",
+    "@prisma/client": "^5.8.1",
+    "pino": "^9.9.5",
+    "zod": "^4.1.8"
+  },
+  "devDependencies": {
+    "vitest": "^1.2.2",
+    "vitest-mock-extended": "^3.1.0"
+  }
 }

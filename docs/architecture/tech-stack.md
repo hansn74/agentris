@@ -30,5 +30,5 @@ This is the definitive technology selection for Agentris. All development must u
 | CSS Framework        | Tailwind CSS              | 3.4.x           | Utility-first CSS                            | Fast development, consistent design, pairs with shadcn/ui                 |
 | Form Handling        | React Hook Form + Zod     | 7.49.x / 3.22.x | Form validation                              | Type-safe forms, great performance                                        |
 | LLM SDK              | Anthropic SDK             | 0.20.x          | Claude API integration                       | Official SDK, TypeScript support                                          |
-| Salesforce SDK       | JSForce + SF CLI          | 3.x / 2.x       | Salesforce API wrapper                       | Comprehensive API coverage, CLI for metadata                              |
+| Salesforce SDK       | JSForce                   | 3.x             | Comprehensive Salesforce API client         | Full API coverage (REST, SOAP, Metadata, Tooling), no CLI needed          |
 | Jira Client          | Jira.js                   | 4.x             | Jira API wrapper                             | Modern, TypeScript-native Jira client                                     |

@@ -24,6 +24,7 @@
     "@agentris/auth": "workspace:*",
     "@agentris/db": "workspace:*",
     "@agentris/integrations": "workspace:*",
+    "@agentris/integrations-salesforce": "workspace:*",
     "@agentris/shared": "workspace:*",
     "@prisma/client": "5.8.1",
     "@trpc/client": "11.5.1",
@@ -37,6 +38,8 @@
     "zod": "3.22.5"
   },
   "devDependencies": {
+    "@types/ioredis": "^5.0.0",
+    "ioredis": "^5.8.0",
     "tsx": "^4.20.5"
   }
 }

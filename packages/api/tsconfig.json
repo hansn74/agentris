@@ -14,7 +14,9 @@
     { "path": "../auth" },
     { "path": "../db" },
     { "path": "../shared" },
-    { "path": "../integrations" }
+    { "path": "../integrations" },
+    { "path": "../ai-engine" },
+    { "path": "../services" }
   ],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

@@ -39,6 +39,14 @@ model User {
   integrations    Integration[]
   jiraOAuthStates JiraOAuthState[]
   tickets         Ticket[]
+  salesforceOrgs  SalesforceOrganization[]
+  approvals       Approval[]
+  rollbacks       DeploymentRollback[]
+  llmRequests     LLMRequest[]
+  llmUsage        LLMUsage[]
+  createdBatches  TicketBatch[] @relation("BatchCreatedBy")
+  approvedBatches TicketBatch[] @relation("BatchApprovedBy")
+  batchApprovals  BatchApproval[]
 }
 
 // Account model for NextAuth OAuth
@@ -108,6 +116,12 @@ enum IntegrationType {
   SALESFORCE
 }
 
+// Salesforce org type enum
+enum OrgType {
+  SANDBOX
+  PRODUCTION
+}
+
 // Integration model for external service connections
 model Integration {
   id        String          @id @default(cuid())
@@ -148,9 +162,10 @@ enum TicketStatus {
   TESTING
   COMPLETED
   FAILED
+  AUTOMATED
 }
 
-// Organization model
+// Organization model (for tickets)
 model Organization {
   id        String   @id @default(cuid())
   name      String
@@ -173,6 +188,8 @@ model Ticket {
   acceptanceCriteria String?      @db.Text
   assignedToId       String
   organizationId     String
+  userId             String?      // Add user reference
+  automationSuccess  Boolean?     // Track automation success
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
 
@@ -180,6 +197,11 @@ model Ticket {
   assignedTo     User           @relation(fields: [assignedToId], references: [id])
   organization   Organization   @relation(fields: [organizationId], references: [id])
   clarifications Clarification[]
+  automationRuns AutomationRun[]
+  previews       Preview[]
+  analyses       Analysis[]
+  batchTickets   BatchTicket[]
+  batchResults   BatchProcessingResult[]
 
   @@index([jiraKey])
   @@index([assignedToId])
@@ -201,4 +223,481 @@ model Clarification {
   ticket Ticket @relation(fields: [ticketId], references: [jiraKey])
 
   @@index([ticketId])
+}
+
+// Salesforce OAuth state for CSRF protection
+model SalesforceOAuthState {
+  id          String   @id @default(cuid())
+  state       String   @unique
+  userId      String
+  orgType     OrgType
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([state])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Security event tracking for auth attempts
+model AuthSecurityEvent {
+  id          String   @id @default(cuid())
+  userId      String
+  eventType   String   // e.g., "AUTH_SUCCESS", "AUTH_FAILURE", "RATE_LIMIT_EXCEEDED"
+  service     String   // e.g., "SALESFORCE", "JIRA"
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?    // Additional event details
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([service])
+  @@index([createdAt])
+}
+
+// Salesforce Organization model
+model SalesforceOrganization {
+  id            String    @id @default(cuid())
+  name          String
+  instanceUrl   String
+  orgId         String    @unique
+  orgType       OrgType   @map("type")
+  refreshToken  String    @db.Text // Encrypted refresh token
+  lastSync      DateTime?
+  userId        String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deployments   Deployment[]
+
+  @@unique([userId, orgId])
+  @@index([userId])
+  @@index([orgId])
+}
+
+// Deployment model for Salesforce deployments
+model Deployment {
+  id             String                 @id @default(cuid())
+  organizationId String
+  deploymentId   String                 @unique
+  status         String
+  metadata       Json
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  // Relations
+  organization   SalesforceOrganization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  logs           DeploymentLog[]
+  rollbacks      DeploymentRollback[]
+
+  @@index([organizationId])
+  @@index([deploymentId])
+}
+
+// Deployment log level enum
+enum LogLevel {
+  INFO
+  WARNING
+  ERROR
+}
+
+// Deployment log model for tracking deployment logs
+model DeploymentLog {
+  id           String   @id @default(cuid())
+  deploymentId String
+  level        LogLevel
+  message      String   @db.Text
+  timestamp    DateTime @default(now())
+  metadata     Json?
+  
+  // Relations
+  deployment   Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  
+  @@index([deploymentId])
+  @@index([timestamp])
+  @@index([level])
+}
+
+// Rollback status enum
+enum RollbackStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+// Deployment rollback model for tracking rollback operations
+model DeploymentRollback {
+  id               String         @id @default(cuid())
+  deploymentId     String
+  rollbackMetadata Json           // Store original state for rollback
+  status           RollbackStatus @default(PENDING)
+  reason           String         @db.Text
+  initiatedBy      String
+  createdAt        DateTime       @default(now())
+  completedAt      DateTime?
+  error            String?        @db.Text
+  
+  // Relations
+  deployment       Deployment     @relation(fields: [deploymentId], references: [id])
+  user             User           @relation(fields: [initiatedBy], references: [id])
+  
+  @@index([deploymentId])
+  @@index([status])
+  @@index([initiatedBy])
+}
+
+// Automation run status enum
+enum AutomationStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  PARTIAL
+}
+
+// Automation run model for tracking automation executions
+model AutomationRun {
+  id          String           @id @default(cuid())
+  ticketId    String
+  status      AutomationStatus @default(PENDING)
+  metadata    Json             // Generated metadata and configuration
+  error       String?          @db.Text
+  startedAt   DateTime         @default(now())
+  completedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  
+  // Relations
+  ticket      Ticket           @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  steps       AutomationStep[]
+  previews    Preview[]
+
+  @@index([ticketId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// Automation step model for tracking individual steps in an automation run
+model AutomationStep {
+  id          String   @id @default(cuid())
+  runId       String
+  stepType    String   // PARSE, GENERATE, VALIDATE, DEPLOY, VERIFY, ERROR, CANCELLED
+  status      String   // RUNNING, COMPLETED, FAILED
+  input       Json     // Input data for the step
+  output      Json?    // Output data from the step
+  error       String?  @db.Text
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  run         AutomationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([runId])
+  @@index([stepType])
+  @@index([status])
+}
+
+// Preview model for change preview system
+model Preview {
+  id            String   @id @default(cuid())
+  ticketId      String
+  runId         String?
+  status        String   // GENERATING, READY, EXPIRED
+  metadata      Json     // Preview data structure
+  generatedAt   DateTime @default(now())
+  expiresAt     DateTime
+  
+  // Relations
+  ticket        Ticket   @relation(fields: [ticketId], references: [id])
+  automationRun AutomationRun? @relation(fields: [runId], references: [id])
+  items         PreviewItem[]
+  approvals     Approval[]
+  
+  @@index([ticketId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+// Preview item model for individual changes
+model PreviewItem {
+  id            String   @id @default(cuid())
+  previewId     String
+  itemType      String   // FIELD, VALIDATION_RULE, etc.
+  name          String
+  currentState  Json?    // Existing metadata if any
+  proposedState Json     // New metadata to be created
+  impact        String   // LOW, MEDIUM, HIGH
+  description   String   @db.Text
+  
+  // Relations
+  preview       Preview  @relation(fields: [previewId], references: [id], onDelete: Cascade)
+  approvalItem  ApprovalItem?
+  
+  @@index([previewId])
+  @@index([itemType])
+}
+
+// Approval status enum
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  MODIFIED
+}
+
+// Approval item status enum
+enum ApprovalItemStatus {
+  APPROVED
+  REJECTED
+  MODIFIED
+}
+
+// Approval model for tracking approval workflows
+model Approval {
+  id           String         @id @default(cuid())
+  previewId    String
+  userId       String
+  status       ApprovalStatus @default(PENDING)
+  comments     String?        @db.Text
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  
+  // Relations
+  preview      Preview        @relation(fields: [previewId], references: [id])
+  user         User           @relation(fields: [userId], references: [id])
+  items        ApprovalItem[]
+  
+  @@index([previewId])
+  @@index([userId])
+  @@index([status])
+}
+
+// Approval item model for individual change approvals
+model ApprovalItem {
+  id            String             @id @default(cuid())
+  approvalId    String
+  previewItemId String             @unique
+  status        ApprovalItemStatus
+  modifiedData  Json?              // If modified, store new data
+  reason        String?            @db.Text
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  
+  // Relations
+  approval      Approval           @relation(fields: [approvalId], references: [id], onDelete: Cascade)
+  previewItem   PreviewItem        @relation(fields: [previewItemId], references: [id])
+  
+  @@index([approvalId])
+  @@index([status])
+}
+
+// LLM provider enum
+enum LLMProvider {
+  ANTHROPIC
+  OPENAI
+  GEMINI
+}
+
+// LLM model for tracking individual LLM requests
+model LLMRequest {
+  id           String      @id @default(cuid())
+  provider     LLMProvider @default(ANTHROPIC)
+  model        String      // e.g., "claude-3-opus-20240229"
+  prompt       String      @db.Text
+  response     String?     @db.Text
+  tokenCount   Int         // Total tokens (input + output)
+  cost         Float       // Cost in USD
+  userId       String
+  cacheHit     Boolean     @default(false)
+  error        String?     @db.Text
+  createdAt    DateTime    @default(now())
+  
+  // Relations
+  user         User        @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([provider])
+  @@index([createdAt])
+  @@index([cacheHit])
+}
+
+// LLM usage model for aggregated tracking
+model LLMUsage {
+  id           String      @id @default(cuid())
+  userId       String
+  date         DateTime    @db.Date
+  totalTokens  Int         @default(0)
+  totalCost    Float       @default(0)
+  requestCount Int         @default(0)
+  cacheHits    Int         @default(0)
+  provider     LLMProvider
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  // Relations
+  user         User        @relation(fields: [userId], references: [id])
+  
+  @@unique([userId, date, provider])
+  @@index([userId])
+  @@index([date])
+  @@index([provider])
+}
+
+// LLM cache model for response caching
+model LLMCache {
+  id           String   @id @default(cuid())
+  cacheKey     String   @unique // Hash of prompt + model + params
+  provider     LLMProvider
+  model        String
+  response     String   @db.Text
+  tokenCount   Int
+  expiresAt    DateTime
+  hitCount     Int      @default(0)
+  createdAt    DateTime @default(now())
+  lastAccessed DateTime @default(now())
+  
+  @@index([cacheKey])
+  @@index([expiresAt])
+  @@index([provider])
+}
+
+// Analysis type enum
+enum AnalysisType {
+  AMBIGUITY
+  COMPLEXITY
+  FEASIBILITY
+  BATCH_SIMILARITY
+}
+
+// Ambiguity pattern types enum
+enum AmbiguityPattern {
+  MISSING_INFO
+  VAGUE_TERMS
+  CONFLICTING_REQUIREMENTS
+  UNCLEAR_SCOPE
+  MISSING_ACCEPTANCE_CRITERIA
+  UNCLEAR_DEPENDENCIES
+  AMBIGUOUS_TERMINOLOGY
+}
+
+// Analysis model for storing various analysis results
+model Analysis {
+  id           String       @id @default(cuid())
+  ticketId     String
+  type         AnalysisType
+  findings     Json         // Detailed findings with patterns, terms, conflicts
+  confidence   Float        // Confidence score (0.0 to 1.0)
+  score        Float?       // Overall score (0.0 to 1.0)
+  patterns     AmbiguityPattern[] // Array of detected patterns
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  
+  // Relations
+  ticket       Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  
+  @@unique([ticketId, type])
+  @@index([ticketId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// Batch status enum
+enum BatchStatus {
+  PENDING
+  APPROVED
+  PROCESSING
+  COMPLETED
+  PARTIALLY_COMPLETED
+  FAILED
+}
+
+// Batch processing model for grouping similar tickets
+model TicketBatch {
+  id                String       @id @default(cuid())
+  name              String       // Human-readable batch name
+  groupingCriteria  Json         // Criteria used for grouping (change type, object, etc.)
+  status            BatchStatus  @default(PENDING)
+  metadata          Json?        // Additional batch metadata
+  createdById       String
+  approvedById      String?
+  processedAt       DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  
+  // Relations
+  createdBy         User         @relation("BatchCreatedBy", fields: [createdById], references: [id])
+  approvedBy        User?        @relation("BatchApprovedBy", fields: [approvedById], references: [id])
+  tickets           BatchTicket[]
+  approval          BatchApproval?
+  results           BatchProcessingResult[]
+  
+  @@index([status])
+  @@index([createdById])
+  @@index([createdAt])
+}
+
+// Junction table for many-to-many relationship between batches and tickets
+model BatchTicket {
+  id         String    @id @default(cuid())
+  batchId    String
+  ticketId   String
+  excluded   Boolean   @default(false) // Whether ticket is excluded from batch
+  addedAt    DateTime  @default(now())
+  excludedAt DateTime?
+  
+  // Relations
+  batch      TicketBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  ticket     Ticket      @relation(fields: [ticketId], references: [id])
+  
+  @@unique([batchId, ticketId])
+  @@index([batchId])
+  @@index([ticketId])
+  @@index([excluded])
+}
+
+// Batch approval model for tracking batch-level approvals
+model BatchApproval {
+  id              String         @id @default(cuid())
+  batchId         String         @unique
+  userId          String
+  status          ApprovalStatus @default(PENDING)
+  comments        String?        @db.Text
+  approvalData    Json?          // Store approval-specific data
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  
+  // Relations
+  batch           TicketBatch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  user            User           @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Batch processing result model for tracking execution results
+model BatchProcessingResult {
+  id              String    @id @default(cuid())
+  batchId         String
+  ticketId        String
+  success         Boolean
+  error           String?   @db.Text
+  metadata        Json?     // Processing details and results
+  processedAt     DateTime  @default(now())
+  
+  // Relations
+  batch           TicketBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  ticket          Ticket      @relation(fields: [ticketId], references: [id])
+  
+  @@unique([batchId, ticketId])
+  @@index([batchId])
+  @@index([ticketId])
+  @@index([success])
+  @@index([processedAt])
 }

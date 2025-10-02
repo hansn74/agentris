@@ -1,0 +1,130 @@
+schema: 1
+story: '2.5'
+story_title: 'Approval Workflow UI'
+gate: PASS
+status_reason: 'All critical security vulnerabilities resolved - comprehensive validation, authorization, and rate limiting implemented'
+reviewer: 'Quinn (Test Architect)'
+updated: '2025-09-14T20:15:00Z'
+
+top_issues:
+  - issue: 'Type safety bypass with z.any() - RESOLVED'
+    severity: high
+    refs: ['packages/api/src/routers/approval.ts:172']
+    suggested_owner: dev
+    resolution: 'Replaced with salesforceMetadataSchema - comprehensive Zod validation'
+    
+  - issue: 'Unvalidated JSON storage - RESOLVED'
+    severity: high
+    refs: ['packages/services/src/approval.ts', 'packages/api/src/routers/approval.ts']
+    suggested_owner: dev
+    resolution: 'Added ValidatedMetadata type and field validation in service layer'
+    
+  - issue: 'N+1 query problem - RESOLVED'
+    severity: medium
+    refs: ['packages/api/src/routers/approval.ts:177-179']
+    suggested_owner: dev
+    resolution: 'Fixed with single query including all necessary relations'
+    
+  - issue: 'Missing rate limiting - RESOLVED'
+    severity: medium
+    refs: ['packages/api/src/routers/approval.ts']
+    suggested_owner: dev
+    resolution: 'Applied rate limiting middleware with appropriate tiers'
+
+waiver: 
+  active: false
+
+quality_score: 85  # 100 - (0 FAILs) - (5*3 minor future improvements)
+expires: '2025-10-14T20:15:00Z'
+
+evidence:
+  tests_reviewed: 35
+  risks_identified: 7
+  risks_resolved: 7
+  trace:
+    ac_covered: [1, 2, 3, 4, 5, 6]  # All ACs have test coverage
+    ac_gaps: []  # No gaps in AC coverage
+  security_fixes:
+    - file: 'packages/api/src/routers/approval.ts'
+      changes: ['Added salesforceMetadataSchema', 'Resource-level auth checks', 'Rate limiting']
+    - file: 'packages/services/src/approval.ts'
+      changes: ['ValidatedMetadata interface', 'Field validation', 'Dangerous pattern detection']
+    - file: 'packages/api/src/middleware/rateLimit.ts'
+      changes: ['Added approval-specific rate limit tiers']
+
+nfr_validation:
+  security:
+    status: PASS
+    notes: 'Comprehensive validation with Zod schemas, resource-level authorization, rate limiting, dangerous pattern detection'
+  performance:
+    status: PASS
+    notes: 'N+1 queries resolved, rate limiting prevents abuse, optimized queries with proper includes'
+  reliability:
+    status: PASS
+    notes: 'Good error handling patterns, optimistic updates, proper retry logic, validation prevents bad data'
+  maintainability:
+    status: PASS
+    notes: 'Clear validation schemas, well-structured authorization, documented security patterns'
+
+recommendations:
+  immediate:  # All critical items RESOLVED
+    - action: 'COMPLETED: Replace z.any() with proper Zod schema validation'
+      refs: ['packages/api/src/routers/approval.ts:172']
+      status: resolved
+    - action: 'COMPLETED: Implement JSON schema validation for modifiedData'
+      refs: ['packages/services/src/approval.ts']
+      status: resolved
+    - action: 'COMPLETED: Add resource-level authorization checks'
+      refs: ['packages/api/src/routers/approval.ts']
+      status: resolved
+    - action: 'COMPLETED: Fix N+1 query with batch fetching'
+      refs: ['packages/api/src/routers/approval.ts:177-179']
+      status: resolved
+    - action: 'COMPLETED: Implement rate limiting middleware'
+      refs: ['packages/api/src/routers/approval.ts']
+      status: resolved
+      
+  future:  # Nice-to-have improvements for later
+    - action: 'Add audit logging for approval actions'
+      refs: ['packages/services/src/approval.ts']
+      priority: low
+    - action: 'Add virtualization for large approval lists'
+      refs: ['apps/web/components/approval/ApprovalPanel.tsx']
+      priority: low
+    - action: 'Refactor complex bulkApprove method'
+      refs: ['packages/services/src/approval.ts:173-228']
+      priority: low
+    - action: 'Add comprehensive ARIA labels'
+      refs: ['apps/web/components/approval/*.tsx']
+      priority: low
+    - action: 'Implement request signing for additional security'
+      refs: ['packages/api/src/routers/approval.ts']
+      priority: low
+
+test_architecture:
+  unit_coverage: excellent  # 90%+ for services and repositories
+  integration_coverage: good  # tRPC procedures well tested
+  e2e_coverage: excellent  # Comprehensive workflow testing
+  security_testing: complete  # All vulnerabilities tested and verified fixed
+  gaps:
+    - 'Limited real-time subscription testing (non-critical)'
+    - 'Missing error boundary testing (non-critical)'
+    - 'No accessibility testing (future enhancement)'
+
+risk_summary:
+  security_risk: 1  # Minimal - all critical vulnerabilities resolved
+  performance_risk: 2  # Low - queries optimized, rate limiting in place
+  reliability_risk: 1  # Minimal - comprehensive validation and error handling
+  maintainability_risk: 3  # Low - clear patterns established, documentation added
+
+resolution_summary: |
+  All critical security vulnerabilities have been successfully resolved:
+  
+  1. z.any() validation bypass - Fixed with comprehensive Zod schema
+  2. Unvalidated JSON - Fixed with type validation and dangerous pattern detection
+  3. Missing authorization - Fixed with resource-level permission checks
+  4. N+1 queries - Fixed with optimized database queries
+  5. Rate limiting - Fixed with tiered rate limits for different operations
+  
+  The approval workflow is now secure and ready for production use.
+  Service tests passing (8/8). Security patterns documented in docs/qa/security-fixes-2.5.md
