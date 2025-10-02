@@ -322,12 +322,21 @@ export class RecommendationEngine {
       [{ role: 'user', content: prompt }],
       {
         temperature: 0.4,
-        maxTokens: 1500
+        maxTokens: 1500,
+        stream: false  // Ensure we get a non-streaming response
       }
     );
 
     try {
-      const responseContent = typeof response === 'string' ? response : response.content;
+      let responseContent: string;
+      if (typeof response === 'string') {
+        responseContent = response;
+      } else if ('content' in response) {
+        responseContent = response.content;
+      } else {
+        // Handle streaming response (shouldn't happen with stream: false)
+        throw new Error('Unexpected streaming response');
+      }
       const result = JSON.parse(responseContent);
       await this.cacheRecommendations(context.ticketId, result.recommendations);
       return result.recommendations;
