@@ -10,4 +10,10 @@ export { ApprovalRepository } from './ApprovalRepository';
 export { ApprovalItemRepository } from './ApprovalItemRepository';
 export { DeploymentRepository } from './DeploymentRepository';
 export type { CreateDeploymentInput, CreateDeploymentLogInput, CreateDeploymentRollbackInput, UpdateDeploymentStatusInput, UpdateRollbackStatusInput, } from './DeploymentRepository';
+export { LLMRepository } from './LLMRepository';
+export { ClarificationRepository } from './ClarificationRepository';
+export type { CreateClarificationInput, UpdateClarificationInput, ClarificationFilter } from './ClarificationRepository';
+export { RecommendationRepository } from './RecommendationRepository';
+export { BatchRepository } from './BatchRepository';
+export { AnalysisRepository } from './AnalysisRepository';
 //# sourceMappingURL=index.d.ts.map

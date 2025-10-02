@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeploymentRepository = exports.ApprovalItemRepository = exports.ApprovalRepository = exports.PreviewItemRepository = exports.PreviewRepository = exports.AutomationStepRepository = exports.AutomationRunRepository = void 0;
+exports.AnalysisRepository = exports.BatchRepository = exports.RecommendationRepository = exports.ClarificationRepository = exports.LLMRepository = exports.DeploymentRepository = exports.ApprovalItemRepository = exports.ApprovalRepository = exports.PreviewItemRepository = exports.PreviewRepository = exports.AutomationStepRepository = exports.AutomationRunRepository = void 0;
 var AutomationRunRepository_1 = require("./AutomationRunRepository");
 Object.defineProperty(exports, "AutomationRunRepository", { enumerable: true, get: function () { return AutomationRunRepository_1.AutomationRunRepository; } });
 var AutomationStepRepository_1 = require("./AutomationStepRepository");
@@ -15,4 +15,17 @@ var ApprovalItemRepository_1 = require("./ApprovalItemRepository");
 Object.defineProperty(exports, "ApprovalItemRepository", { enumerable: true, get: function () { return ApprovalItemRepository_1.ApprovalItemRepository; } });
 var DeploymentRepository_1 = require("./DeploymentRepository");
 Object.defineProperty(exports, "DeploymentRepository", { enumerable: true, get: function () { return DeploymentRepository_1.DeploymentRepository; } });
+var LLMRepository_1 = require("./LLMRepository");
+Object.defineProperty(exports, "LLMRepository", { enumerable: true, get: function () { return LLMRepository_1.LLMRepository; } });
+var ClarificationRepository_1 = require("./ClarificationRepository");
+Object.defineProperty(exports, "ClarificationRepository", { enumerable: true, get: function () { return ClarificationRepository_1.ClarificationRepository; } });
+var RecommendationRepository_1 = require("./RecommendationRepository");
+Object.defineProperty(exports, "RecommendationRepository", { enumerable: true, get: function () { return RecommendationRepository_1.RecommendationRepository; } });
+var BatchRepository_1 = require("./BatchRepository");
+Object.defineProperty(exports, "BatchRepository", { enumerable: true, get: function () { return BatchRepository_1.BatchRepository; } });
+// TODO: These repositories need to be implemented
+// export { TicketRepository } from './TicketRepository';
+var AnalysisRepository_1 = require("./AnalysisRepository");
+Object.defineProperty(exports, "AnalysisRepository", { enumerable: true, get: function () { return AnalysisRepository_1.AnalysisRepository; } });
+// export { ChangeSetRepository } from './ChangeSetRepository';
 //# sourceMappingURL=index.js.map

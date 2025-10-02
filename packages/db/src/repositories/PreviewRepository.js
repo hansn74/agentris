@@ -114,6 +114,76 @@ class PreviewRepository {
             where: { status },
         });
     }
+    async createWithPreviewData(data) {
+        const expiresAt = new Date();
+        expiresAt.setHours(expiresAt.getHours() + (data.expiresInHours ?? 24));
+        return this.prisma.preview.create({
+            data: {
+                ticketId: data.ticketId,
+                runId: data.runId,
+                status: 'READY',
+                metadata: data.previewData,
+                generatedAt: new Date(),
+                expiresAt,
+            },
+        });
+    }
+    async createPreviewItems(previewId, items) {
+        return this.prisma.previewItem.createMany({
+            data: items.map(item => ({
+                previewId,
+                itemType: item.itemType,
+                name: item.name,
+                currentState: item.currentState,
+                proposedState: item.proposedState,
+                impact: item.impact,
+                description: item.description,
+            })),
+        }).then(() => this.prisma.previewItem.findMany({
+            where: { previewId },
+        }));
+    }
+    async getPreviewWithFormats(ticketId) {
+        const preview = await this.findActiveByTicketId(ticketId);
+        if (!preview) {
+            return {
+                currentPreview: null,
+                availableFormats: [],
+            };
+        }
+        const metadata = preview.metadata;
+        const availableFormats = [];
+        if (metadata?.type) {
+            availableFormats.push(metadata.type);
+            // Add other formats based on content type
+            if (metadata.type === 'diagram') {
+                availableFormats.push('text');
+            }
+            else if (metadata.type === 'mockup') {
+                availableFormats.push('table', 'text');
+            }
+            else if (metadata.type === 'code-diff') {
+                availableFormats.push('text');
+            }
+        }
+        return {
+            currentPreview: preview,
+            availableFormats,
+        };
+    }
+    async expirePreviewsForTicket(ticketId) {
+        const result = await this.prisma.preview.updateMany({
+            where: {
+                ticketId,
+                status: 'READY',
+            },
+            data: {
+                status: 'EXPIRED',
+                expiresAt: new Date(),
+            },
+        });
+        return result.count;
+    }
 }
 exports.PreviewRepository = PreviewRepository;
 //# sourceMappingURL=PreviewRepository.js.map

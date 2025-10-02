@@ -1,4 +1,5 @@
 import { type PrismaClient, type Preview, type PreviewItem, type Prisma } from '@prisma/client';
+import { PreviewFormat, PreviewData } from '@agentris/shared';
 export interface PreviewWithItems extends Preview {
     items: PreviewItem[];
 }
@@ -31,5 +32,25 @@ export declare class PreviewRepository {
     deleteExpiredPreviews(hoursToKeep?: number): Promise<number>;
     getLatestPreviewForTicket(ticketId: string): Promise<PreviewWithItems | null>;
     countByStatus(status: string): Promise<number>;
+    createWithPreviewData(data: {
+        ticketId: string;
+        runId?: string;
+        format: PreviewFormat;
+        previewData: PreviewData;
+        expiresInHours?: number;
+    }): Promise<Preview>;
+    createPreviewItems(previewId: string, items: Array<{
+        itemType: string;
+        name: string;
+        currentState?: any;
+        proposedState: any;
+        impact: 'LOW' | 'MEDIUM' | 'HIGH';
+        description: string;
+    }>): Promise<PreviewItem[]>;
+    getPreviewWithFormats(ticketId: string): Promise<{
+        currentPreview: Preview | null;
+        availableFormats: string[];
+    }>;
+    expirePreviewsForTicket(ticketId: string): Promise<number>;
 }
 //# sourceMappingURL=PreviewRepository.d.ts.map
