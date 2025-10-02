@@ -463,7 +463,7 @@ export class TicketService {
       // Parse the original questions from the clarification comment
       const clarificationComment = allComments[clarificationIndex];
       if (!clarificationComment) {
-        return [];
+        return new Map<string, string>();
       }
       const clarificationBody = typeof clarificationComment.body === 'string'
         ? clarificationComment.body
