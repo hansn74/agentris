@@ -1,10 +1,11 @@
-import { ImpactAnalyzerService } from '@agentris/services';
+// TODO: Fix circular dependency - ImpactAnalyzerService should be moved to ai-engine or a shared package
+// import { ImpactAnalyzerService } from '@agentris/services';
 import { MetadataService } from '@agentris/integrations-salesforce';
 import type { ConflictDetail } from '@agentris/shared';
 
 export interface ConflictDetectorOptions {
   metadataService: MetadataService;
-  impactAnalyzer: ImpactAnalyzerService;
+  impactAnalyzer: any; // ImpactAnalyzerService;
 }
 
 export interface ExtendedConflict extends ConflictDetail {
@@ -15,7 +16,7 @@ export interface ExtendedConflict extends ConflictDetail {
 
 export class ConflictDetector {
   private metadataService: MetadataService;
-  private impactAnalyzer: ImpactAnalyzerService;
+  private impactAnalyzer: any; // ImpactAnalyzerService;
 
   constructor(options: ConflictDetectorOptions) {
     this.metadataService = options.metadataService;

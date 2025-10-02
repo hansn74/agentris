@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ConflictDetector } from './conflict-detector';
-import { ImpactAnalyzerService } from '@agentris/services';
+// import { ImpactAnalyzerService } from '@agentris/services';
 import { MetadataService } from '@agentris/integrations-salesforce';
 
 describe('ConflictDetector', () => {
   let detector: ConflictDetector;
   let mockMetadataService: Partial<MetadataService>;
-  let mockImpactAnalyzer: Partial<ImpactAnalyzerService>;
+  let mockImpactAnalyzer: any; // Partial<ImpactAnalyzerService>;
 
   beforeEach(() => {
     mockMetadataService = {
