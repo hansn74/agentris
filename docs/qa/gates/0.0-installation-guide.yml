@@ -12,68 +12,68 @@ waiver: { active: false }
 
 # Critical issues identified
 top_issues:
-  - id: "SETUP-001"
+  - id: 'SETUP-001'
     severity: high
-    finding: "Installation Step 5 (pnpm db:push) fails with missing DATABASE_URL"
-    suggested_action: "Implement dotenv-cli in packages/db scripts to load root .env"
-  - id: "ARCH-001"  
+    finding: 'Installation Step 5 (pnpm db:push) fails with missing DATABASE_URL'
+    suggested_action: 'Implement dotenv-cli in packages/db scripts to load root .env'
+  - id: 'ARCH-001'
     severity: medium
-    finding: "Monorepo uses duplicate .env files (anti-pattern)"
-    suggested_action: "Consolidate to single root .env using dotenv-cli or turbo env passing"
-  - id: "DOC-001"
+    finding: 'Monorepo uses duplicate .env files (anti-pattern)'
+    suggested_action: 'Consolidate to single root .env using dotenv-cli or turbo env passing'
+  - id: 'DOC-001'
     severity: low
     finding: "README doesn't explain the env configuration architecture"
-    suggested_action: "Add note about monorepo env handling in troubleshooting section"
+    suggested_action: 'Add note about monorepo env handling in troubleshooting section'
 
 # Risk assessment
 risk_summary:
   totals: { critical: 1, high: 0, medium: 1, low: 0 }
   recommendations:
-    must_fix: 
-      - "Fix packages/db scripts to use root .env via dotenv-cli"
-      - "Update README Step 3 or 5 with proper env setup"
+    must_fix:
+      - 'Fix packages/db scripts to use root .env via dotenv-cli'
+      - 'Update README Step 3 or 5 with proper env setup'
     monitor:
-      - "User onboarding experience metrics"
-      - "Installation success rate"
+      - 'User onboarding experience metrics'
+      - 'Installation success rate'
 
 # Evidence from testing
 evidence:
   tests_reviewed: 1
   risks_identified: 3
   installation_tested: true
-  failure_rate: "100%"
-  root_cause: "Prisma in packages/db cannot access root .env file"
+  failure_rate: '100%'
+  root_cause: 'Prisma in packages/db cannot access root .env file'
 
 # Recommended fixes (in priority order)
 recommendations:
   immediate:
-    - action: "Add dotenv-cli to packages/db and update scripts"
-      refs: ["packages/db/package.json:11-13"]
+    - action: 'Add dotenv-cli to packages/db and update scripts'
+      refs: ['packages/db/package.json:11-13']
       implementation: |
         1. pnpm add -D dotenv-cli -w @agentris/db
         2. Update scripts:
            "db:push": "dotenv -e ../../.env -- prisma db push"
            "db:generate": "dotenv -e ../../.env -- prisma generate"
            "db:studio": "dotenv -e ../../.env -- prisma studio"
-    - action: "Quick fix - Update README Step 3"
-      refs: ["README.md:110-112"]
+    - action: 'Quick fix - Update README Step 3'
+      refs: ['README.md:110-112']
       implementation: |
         Add after line 111:
         cp .env packages/db/.env  # Required for Prisma
   future:
-    - action: "Consider Turborepo env variable passing"
-      refs: ["turbo.json"]
-      note: "More elegant solution using passThroughEnv or globalEnv"
+    - action: 'Consider Turborepo env variable passing'
+      refs: ['turbo.json']
+      note: 'More elegant solution using passThroughEnv or globalEnv'
 
 # Quality attributes assessment
 nfr_validation:
-  usability: { status: FAIL, notes: "New user experience broken at Step 5" }
-  maintainability: { status: CONCERNS, notes: "Duplicate .env files increase maintenance burden" }
-  testability: { status: PASS, notes: "Issue easily reproducible" }
-  reliability: { status: FAIL, notes: "Installation process unreliable" }
+  usability: { status: FAIL, notes: 'New user experience broken at Step 5' }
+  maintainability: { status: CONCERNS, notes: 'Duplicate .env files increase maintenance burden' }
+  testability: { status: PASS, notes: 'Issue easily reproducible' }
+  reliability: { status: FAIL, notes: 'Installation process unreliable' }
 
 # Historical context
 history:
-  - at: "2025-01-09T00:00:00Z"
+  - at: '2025-01-09T00:00:00Z'
     gate: FAIL
-    note: "Initial assessment - critical installation blocker identified"
+    note: 'Initial assessment - critical installation blocker identified'

@@ -47,15 +47,23 @@ detailed_assessment:
   requirements_traceability:
     - ac: 1
       description: 'Service can retrieve org metadata (objects, fields, layouts)'
-      tests: ['describeGlobal', 'describeObject', 'listFields', 'listLayouts', 'listValidationRules']
+      tests:
+        ['describeGlobal', 'describeObject', 'listFields', 'listLayouts', 'listValidationRules']
       status: PASS
     - ac: 2
       description: 'Metadata API wrapper for create/update/delete operations'
-      tests: ['createMetadata', 'updateMetadata', 'deleteMetadata', 'deployMetadata', 'retrieveMetadata']
+      tests:
+        ['createMetadata', 'updateMetadata', 'deleteMetadata', 'deployMetadata', 'retrieveMetadata']
       status: PASS
     - ac: 3
       description: 'Deployment status tracking for async operations'
-      tests: ['checkDeploymentStatus', 'pollDeploymentStatus', 'deployment queue management', 'rollback capability']
+      tests:
+        [
+          'checkDeploymentStatus',
+          'pollDeploymentStatus',
+          'deployment queue management',
+          'rollback capability',
+        ]
       status: PASS
     - ac: 4
       description: 'Error handling for governor limits and API restrictions'
@@ -67,7 +75,12 @@ detailed_assessment:
       status: PASS
     - ac: 6
       description: 'Unit tests mock Salesforce API responses'
-      tests: ['116 tests across 7 test files', 'all JSForce APIs mocked', 'success and failure scenarios']
+      tests:
+        [
+          '116 tests across 7 test files',
+          'all JSForce APIs mocked',
+          'success and failure scenarios',
+        ]
       status: PASS
 
   code_quality:

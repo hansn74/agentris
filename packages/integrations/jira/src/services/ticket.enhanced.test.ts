@@ -152,8 +152,8 @@ describe('TicketService - Enhanced Clarification Features', () => {
       const result = await ticketService.findTaggedComments('JIRA-123', 'AI-CLARIFIED');
 
       expect(result).toHaveLength(2);
-      expect(result[0].id).toBe('2');
-      expect(result[1].id).toBe('4');
+      expect(result[0]?.id).toBe('2');
+      expect(result[1]?.id).toBe('4');
     });
 
     it('should handle ADF formatted comments', async () => {
@@ -183,7 +183,7 @@ describe('TicketService - Enhanced Clarification Features', () => {
       const result = await ticketService.findTaggedComments('JIRA-123', 'AI-CLARIFIED');
 
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('1');
+      expect(result[0]?.id).toBe('1');
     });
   });
 

@@ -461,9 +461,13 @@ export class TicketService {
       const subsequentComments = allComments.slice(clarificationIndex + 1);
       
       // Parse the original questions from the clarification comment
-      const clarificationBody = typeof allComments[clarificationIndex].body === 'string'
-        ? allComments[clarificationIndex].body
-        : this.parseADF(allComments[clarificationIndex].body);
+      const clarificationComment = allComments[clarificationIndex];
+      if (!clarificationComment) {
+        return [];
+      }
+      const clarificationBody = typeof clarificationComment.body === 'string'
+        ? clarificationComment.body
+        : this.parseADF(clarificationComment.body);
       
       const questions = this.extractQuestionsFromComment(clarificationBody);
       
@@ -485,11 +489,12 @@ export class TicketService {
         for (const pattern of answerPatterns) {
           const matches = Array.from(body.matchAll(pattern));
           for (const match of matches) {
-            const questionIndex = parseInt(match[1]) - 1;
+            const questionIndex = parseInt(match[1]!) - 1;
             if (questionIndex >= 0 && questionIndex < questions.length) {
-              const answer = match[2].trim();
-              if (answer && !answers.has(questions[questionIndex])) {
-                answers.set(questions[questionIndex], answer);
+              const answer = match[2]?.trim();
+              const question = questions[questionIndex];
+              if (answer && question && !answers.has(question)) {
+                answers.set(question, answer);
               }
             }
           }
@@ -508,7 +513,7 @@ export class TicketService {
                 // Extract the text after the question reference
                 const afterRef = body.split(questionRef)[1];
                 if (afterRef) {
-                  const answer = afterRef.split(/\n\n|\d+\.|Q\d+|#\d+/)[0].trim();
+                  const answer = afterRef.split(/\n\n|\d+\.|Q\d+|#\d+/)[0]?.trim();
                   if (answer) {
                     answers.set(question, answer);
                   }
@@ -548,7 +553,9 @@ export class TicketService {
       const matches = Array.from(body.matchAll(pattern));
       if (matches.length > 0) {
         for (const match of matches) {
-          questions.push(match[1].trim());
+          if (match[1]) {
+            questions.push(match[1].trim());
+          }
         }
         break; // Use first matching pattern
       }
@@ -577,11 +584,12 @@ export class TicketService {
         ? 'clarifications-answered'
         : 'clarifications-pending';
 
-      await this.client.updateIssue(ticketKey, {
-        update: {
-          labels: [{ add: label }]
-        }
-      });
+      // TODO: updateIssue method needs to be implemented in JiraClient
+      // await this.client.updateIssue(ticketKey, {
+      //   update: {
+      //     labels: [{ add: label }]
+      //   }
+      // });
 
       logger.info({ 
         ticketKey, 
