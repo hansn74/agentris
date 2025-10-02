@@ -26,7 +26,7 @@ export class RecommendationRepository {
       return await prisma.analysis.update({
         where: { id: existingAnalysis.id },
         data: {
-          findings: { recommendations: recommendations } as unknown as Prisma.JsonValue,
+          findings: { recommendations: recommendations } as any,
           updatedAt: new Date()
         }
       });
@@ -36,10 +36,9 @@ export class RecommendationRepository {
       data: {
         ticketId,
         type: 'COMPLEXITY',
-        findings: {},
+        findings: { recommendations: recommendations } as any,
         score: this.calculateRecommendationScore(recommendations),
-        confidence: this.calculateAverageConfidence(recommendations),
-        findings: { recommendations: recommendations } as unknown as Prisma.JsonValue
+        confidence: this.calculateAverageConfidence(recommendations)
       }
     });
   }

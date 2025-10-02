@@ -37,15 +37,15 @@ export class RecommendationHistoryRepository {
     await this.prisma.analysis.create({
       data: {
         ticketId: entry.ticketId,
-        type: 'RECOMMENDATION_HISTORY',
+        type: 'COMPLEXITY',
         findings: entry as any,
         score: entry.confidence,
         confidence: entry.confidence,
-        metadata: {
-          recommendationId: entry.recommendationId,
-          version: entry.version,
-          action: entry.action
-        } as Prisma.JsonObject
+        // metadata: {
+        //   recommendationId: entry.recommendationId,
+        //   version: entry.version,
+        //   action: entry.action
+        // } as Prisma.JsonObject
       }
     });
   }
@@ -59,17 +59,13 @@ export class RecommendationHistoryRepository {
   ): Promise<HistoryEntry[]> {
     const analyses = await this.prisma.analysis.findMany({
       where: {
-        type: 'RECOMMENDATION_HISTORY',
-        metadata: {
-          path: ['recommendationId'],
-          equals: recommendationId
-        }
+        type: 'COMPLEXITY',
       },
       orderBy: { createdAt: 'desc' },
       take: limit
     });
 
-    return analyses.map(a => a.findings as HistoryEntry);
+    return analyses.map(a => a.findings as unknown as HistoryEntry);
   }
 
   /**
@@ -82,7 +78,7 @@ export class RecommendationHistoryRepository {
   ): Promise<HistoryEntry[]> {
     const where: any = {
       ticketId,
-      type: 'RECOMMENDATION_HISTORY'
+      type: 'COMPLEXITY'
     };
 
     if (startDate || endDate) {
@@ -96,7 +92,7 @@ export class RecommendationHistoryRepository {
       orderBy: { createdAt: 'desc' }
     });
 
-    return analyses.map(a => a.findings as HistoryEntry);
+    return analyses.map(a => a.findings as unknown as HistoryEntry);
   }
 
   /**
@@ -138,14 +134,14 @@ export class RecommendationHistoryRepository {
     await this.prisma.analysis.create({
       data: {
         ticketId: history.ticketId,
-        type: 'RECALCULATION',
+        type: 'COMPLEXITY',
         findings: history as any,
         score: 0,
         confidence: 0,
-        metadata: {
-          triggerType: history.triggerType,
-          timestamp: history.timestamp.toISOString()
-        } as Prisma.JsonObject
+        // metadata: {
+        //   triggerType: history.triggerType,
+        //   timestamp: history.timestamp.toISOString()
+        // } as Prisma.JsonObject
       }
     });
   }
@@ -160,13 +156,13 @@ export class RecommendationHistoryRepository {
     const analyses = await this.prisma.analysis.findMany({
       where: {
         ticketId,
-        type: 'RECALCULATION'
+        type: 'COMPLEXITY'
       },
       orderBy: { createdAt: 'desc' },
       take: limit
     });
 
-    return analyses.map(a => a.findings as RecalculationHistory);
+    return analyses.map(a => a.findings as unknown as RecalculationHistory);
   }
 
   /**
@@ -187,7 +183,7 @@ export class RecommendationHistoryRepository {
     }>;
   }> {
     const where: any = {
-      type: 'RECOMMENDATION_HISTORY'
+      type: 'COMPLEXITY'
     };
 
     if (dateRange) {
@@ -209,7 +205,7 @@ export class RecommendationHistoryRepository {
     };
 
     for (const analysis of analyses) {
-      const entry = analysis.findings as HistoryEntry;
+      const entry = analysis.findings as unknown as HistoryEntry;
       stats.totalRecommendations++;
       stats.confidenceSum += entry.confidence;
 
@@ -320,14 +316,14 @@ export class RecommendationHistoryRepository {
     const analysis = await this.prisma.analysis.findFirst({
       where: {
         ticketId,
-        type: 'RECOMMENDATION'
+        type: 'COMPLEXITY'
       },
       orderBy: { createdAt: 'desc' }
     });
 
-    if (!analysis?.suggestions) return null;
+    if (!analysis?.findings) return null;
 
-    const recommendations = analysis.suggestions as Recommendation[];
+    const recommendations = (analysis.findings as any).recommendations as Recommendation[];
     return recommendations.find(r => r.id === recommendationId) || null;
   }
 
@@ -337,18 +333,14 @@ export class RecommendationHistoryRepository {
   private async getNextVersion(recommendationId: string): Promise<number> {
     const latest = await this.prisma.analysis.findFirst({
       where: {
-        type: 'RECOMMENDATION_HISTORY',
-        metadata: {
-          path: ['recommendationId'],
-          equals: recommendationId
-        }
+        type: 'COMPLEXITY',
       },
       orderBy: { createdAt: 'desc' }
     });
 
     if (!latest?.findings) return 1;
     
-    const entry = latest.findings as HistoryEntry;
+    const entry = latest.findings as unknown as HistoryEntry;
     return (entry.version || 0) + 1;
   }
 

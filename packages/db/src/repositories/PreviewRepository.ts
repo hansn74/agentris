@@ -162,7 +162,7 @@ export class PreviewRepository {
         ticketId: data.ticketId,
         runId: data.runId,
         status: 'READY',
-        metadata: data.previewData as Prisma.JsonValue,
+        metadata: data.previewData as any,
         generatedAt: new Date(),
         expiresAt,
       },
@@ -185,11 +185,11 @@ export class PreviewRepository {
         previewId,
         itemType: item.itemType,
         name: item.name,
-        currentState: item.currentState as Prisma.JsonValue,
-        proposedState: item.proposedState as Prisma.JsonValue,
+        currentState: item.currentState as any,
+        proposedState: item.proposedState as any,
         impact: item.impact,
         description: item.description,
-      })),
+      })) as any,
     }).then(() => 
       this.prisma.previewItem.findMany({
         where: { previewId },
