@@ -2,22 +2,16 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noEmit": false,
-    "composite": true,
+    "composite": false,
+    "skipLibCheck": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
-  "references": [
-    { "path": "../auth" },
-    { "path": "../db" },
-    { "path": "../shared" },
-    { "path": "../integrations" },
-    { "path": "../ai-engine" },
-    { "path": "../services" }
-  ],
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }

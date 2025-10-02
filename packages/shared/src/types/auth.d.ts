@@ -11,19 +11,19 @@ export declare const UserSchema: z.ZodObject<{
     lastActive: z.ZodDate;
 }, "strip", z.ZodTypeAny, {
     id: string;
+    createdAt: Date;
     name: string | null;
     email: string;
     role: "CONSULTANT" | "MANAGER" | "ADMIN";
     emailVerified: Date | null;
-    createdAt: Date;
     lastActive: Date;
 }, {
     id: string;
+    createdAt: Date;
     name: string | null;
     email: string;
     role: "CONSULTANT" | "MANAGER" | "ADMIN";
     emailVerified: Date | null;
-    createdAt: Date;
     lastActive: Date;
 }>;
 export type User = z.infer<typeof UserSchema>;

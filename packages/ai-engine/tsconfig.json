@@ -2,14 +2,13 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": ".",
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": false,
     "composite": false,
+    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },

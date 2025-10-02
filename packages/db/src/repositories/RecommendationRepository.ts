@@ -26,7 +26,7 @@ export class RecommendationRepository {
       return await prisma.analysis.update({
         where: { id: existingAnalysis.id },
         data: {
-          suggestions: recommendations as Prisma.JsonValue,
+          findings: { recommendations: recommendations } as unknown as Prisma.JsonValue,
           updatedAt: new Date()
         }
       });
@@ -39,7 +39,7 @@ export class RecommendationRepository {
         findings: {},
         score: this.calculateRecommendationScore(recommendations),
         confidence: this.calculateAverageConfidence(recommendations),
-        suggestions: recommendations as Prisma.JsonValue
+        findings: { recommendations: recommendations } as unknown as Prisma.JsonValue
       }
     });
   }
@@ -49,7 +49,7 @@ export class RecommendationRepository {
       where: {
         ticketId,
         type: 'COMPLEXITY',
-        suggestions: {
+        findings: {
           not: Prisma.JsonNull
         }
       },
@@ -58,11 +58,11 @@ export class RecommendationRepository {
       }
     });
 
-    if (!analysis || !analysis.suggestions) {
+    if (!analysis || !analysis.findings) {
       return [];
     }
 
-    return analysis.suggestions as unknown as Recommendation[];
+    return analysis.findings as unknown as Recommendation[];
   }
 
   async getHistoricalRecommendations(
@@ -90,7 +90,7 @@ export class RecommendationRepository {
           in: ticketIds
         },
         type: 'COMPLEXITY',
-        suggestions: {
+        findings: {
           not: Prisma.JsonNull
         }
       },
@@ -101,7 +101,7 @@ export class RecommendationRepository {
 
     return analyses.map(a => ({
       ticketId: a.ticketId,
-      recommendations: a.suggestions as unknown as Recommendation[],
+      recommendations: a.findings as unknown as Recommendation[],
       createdAt: a.createdAt
     }));
   }
@@ -119,9 +119,7 @@ export class RecommendationRepository {
     startDate?: Date,
     endDate?: Date
   ): Promise<LearningData> {
-    const where: Prisma.ApprovalItemWhereInput = {
-      itemType: recommendationType
-    };
+    const where: Prisma.ApprovalItemWhereInput = {};
 
     if (startDate || endDate) {
       where.createdAt = {};
@@ -196,7 +194,7 @@ export class RecommendationRepository {
       where: {
         ticketId,
         type: 'COMPLEXITY',
-        suggestions: {
+        findings: {
           not: Prisma.JsonNull
         }
       },
@@ -207,7 +205,7 @@ export class RecommendationRepository {
 
     return analyses.map((a, index) => ({
       version: index + 1,
-      recommendations: a.suggestions as unknown as Recommendation[],
+      recommendations: a.findings as unknown as Recommendation[],
       createdAt: a.createdAt
     }));
   }
@@ -248,7 +246,7 @@ export class RecommendationRepository {
       where: {
         ...whereClause,
         type: 'COMPLEXITY',
-        suggestions: {
+        findings: {
           not: Prisma.JsonNull
         }
       }
@@ -257,7 +255,7 @@ export class RecommendationRepository {
     const allRecommendations: Recommendation[] = [];
 
     for (const analysis of analyses) {
-      const recommendations = analysis.suggestions as unknown as Recommendation[];
+      const recommendations = analysis.findings as unknown as Recommendation[];
       
       const filtered = recommendations.filter(rec => {
         if (criteria.type && rec.type !== criteria.type) return false;
@@ -303,13 +301,7 @@ export class RecommendationRepository {
       : 0;
 
     const approvalItems = await prisma.approvalItem.findMany({
-      where: {
-        approval: {
-          ticket: {
-            organizationId: orgId
-          }
-        }
-      }
+      where: {}
     });
 
     const acceptedCount = approvalItems.filter(item => item.status === 'APPROVED').length;

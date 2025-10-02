@@ -50,6 +50,7 @@ export { RecommendationRepository } from './RecommendationRepository';
 
 export { BatchRepository } from './BatchRepository';
 
-export { TicketRepository } from './TicketRepository';
+// TODO: These repositories need to be implemented
+// export { TicketRepository } from './TicketRepository';
 export { AnalysisRepository } from './AnalysisRepository';
-export { ChangeSetRepository } from './ChangeSetRepository';
+// export { ChangeSetRepository } from './ChangeSetRepository';

@@ -17,13 +17,13 @@ export declare const diagramDataSchema: z.ZodObject<{
         type: z.ZodString;
         metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodBoolean]>>>;
     }, "strip", z.ZodTypeAny, {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }, {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }>, "many">;
@@ -47,8 +47,8 @@ export declare const diagramDataSchema: z.ZodObject<{
     type: "diagram";
     mermaidSyntax: string;
     nodes: {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }[];
@@ -62,8 +62,8 @@ export declare const diagramDataSchema: z.ZodObject<{
     type: "diagram";
     mermaidSyntax: string;
     nodes: {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }[];
@@ -283,13 +283,13 @@ export declare const previewDataSchema: z.ZodDiscriminatedUnion<"type", [z.ZodOb
         type: z.ZodString;
         metadata: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnion<[z.ZodString, z.ZodNumber, z.ZodBoolean]>>>;
     }, "strip", z.ZodTypeAny, {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }, {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }>, "many">;
@@ -313,8 +313,8 @@ export declare const previewDataSchema: z.ZodDiscriminatedUnion<"type", [z.ZodOb
     type: "diagram";
     mermaidSyntax: string;
     nodes: {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }[];
@@ -328,8 +328,8 @@ export declare const previewDataSchema: z.ZodDiscriminatedUnion<"type", [z.ZodOb
     type: "diagram";
     mermaidSyntax: string;
     nodes: {
-        label: string;
         id: string;
+        label: string;
         type: string;
         metadata?: Record<string, string | number | boolean> | undefined;
     }[];
@@ -565,7 +565,7 @@ export declare const FieldMetadataSchema: z.ZodObject<{
     formulaTreatBlanksAs: z.ZodOptional<z.ZodEnum<["BlankAsZero", "BlankAsBlank"]>>;
 }, "strip", z.ZodTypeAny, {
     label: string;
-    type: "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "DateTime" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
+    type: "DateTime" | "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
     name: string;
     required?: boolean | undefined;
     length?: number | undefined;
@@ -586,7 +586,7 @@ export declare const FieldMetadataSchema: z.ZodObject<{
     formulaTreatBlanksAs?: "BlankAsZero" | "BlankAsBlank" | undefined;
 }, {
     label: string;
-    type: "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "DateTime" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
+    type: "DateTime" | "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
     name: string;
     required?: boolean | undefined;
     length?: number | undefined;
@@ -652,7 +652,7 @@ export declare const GeneratedMetadataSchema: z.ZodObject<{
         formulaTreatBlanksAs: z.ZodOptional<z.ZodEnum<["BlankAsZero", "BlankAsBlank"]>>;
     }, "strip", z.ZodTypeAny, {
         label: string;
-        type: "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "DateTime" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
+        type: "DateTime" | "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
         name: string;
         required?: boolean | undefined;
         length?: number | undefined;
@@ -673,7 +673,7 @@ export declare const GeneratedMetadataSchema: z.ZodObject<{
         formulaTreatBlanksAs?: "BlankAsZero" | "BlankAsBlank" | undefined;
     }, {
         label: string;
-        type: "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "DateTime" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
+        type: "DateTime" | "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
         name: string;
         required?: boolean | undefined;
         length?: number | undefined;
@@ -719,7 +719,7 @@ export declare const GeneratedMetadataSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     fields: {
         label: string;
-        type: "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "DateTime" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
+        type: "DateTime" | "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
         name: string;
         required?: boolean | undefined;
         length?: number | undefined;
@@ -751,7 +751,7 @@ export declare const GeneratedMetadataSchema: z.ZodObject<{
 }, {
     fields?: {
         label: string;
-        type: "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "DateTime" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
+        type: "DateTime" | "Text" | "TextArea" | "LongTextArea" | "RichTextArea" | "EncryptedText" | "Email" | "Phone" | "Url" | "Number" | "Currency" | "Percent" | "Date" | "Time" | "Checkbox" | "Picklist" | "MultiselectPicklist" | "Lookup" | "MasterDetail" | "Formula" | "Rollup" | "AutoNumber" | "Geolocation";
         name: string;
         required?: boolean | undefined;
         length?: number | undefined;
@@ -866,12 +866,12 @@ export declare const PreviewMetadataSchema: z.ZodObject<{
         description: z.ZodString;
     }, "strip", z.ZodTypeAny, {
         description: string;
-        severity: "warning" | "error";
+        severity: "error" | "warning";
         rule: string;
         conflictWith: string;
     }, {
         description: string;
-        severity: "warning" | "error";
+        severity: "error" | "warning";
         rule: string;
         conflictWith: string;
     }>, "many">;
@@ -919,7 +919,7 @@ export declare const PreviewMetadataSchema: z.ZodObject<{
     }[];
     ruleConflicts: {
         description: string;
-        severity: "warning" | "error";
+        severity: "error" | "warning";
         rule: string;
         conflictWith: string;
     }[];
@@ -957,7 +957,7 @@ export declare const PreviewMetadataSchema: z.ZodObject<{
     }[];
     ruleConflicts: {
         description: string;
-        severity: "warning" | "error";
+        severity: "error" | "warning";
         rule: string;
         conflictWith: string;
     }[];
