@@ -2,16 +2,15 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
+    "rootDir": "./src",
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": false,
-    "composite": true,
+    "composite": false,
     "declaration": true,
     "declarationMap": true
   },
-  "references": [
-    { "path": "../db" }
-  ],
+  "references": [{ "path": "../db" }, { "path": "../shared" }, { "path": "../services" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }
