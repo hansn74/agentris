@@ -10,7 +10,6 @@
     "declaration": true,
     "declarationMap": true
   },
-  "references": [{ "path": "../db" }, { "path": "../shared" }, { "path": "../services" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }
